@@ -179,8 +179,9 @@ function ServiceNode({ match }) {
   const currentVersion = _.get(versionHistories, "[0].version.version");
   const currentVersionGlobal = _.get(stats, "data.generalStatistics.currentVersion.version");
 
-  const currentSwarm = _.get(swarmHistories, "[0].swarm.swarmId");
+  const currentStakingRequirement = _.get(stats, "data.generalStatistics.currentHeight.stakingRequirement", 0);
 
+  const currentSwarm = _.get(swarmHistories, "[0].swarm.swarmId");
  
   return (
         <>
@@ -222,13 +223,17 @@ function ServiceNode({ match }) {
             </Text>
             <Height height={registrationHeight} />
           </Box>
-          <Box align="center" justify="center" pad="small" direction="row">
-            <Text  size="large" weight="bold" margin={{"right":"small"}}>
-              Staking requirement:
-            </Text>
-            <Text size="large">
-              <Amount amount={stakingRequirement}/>
-            </Text>
+
+          <Box align="end" justify="center" direction="column" style={{ alignSelf: 'flex-end', paddingBottom: '40px'}}>
+            <Box align="center" justify="center" pad="small" direction="row">
+              <Text  size="large" weight="bold" margin={{"right":"small"}}>
+                Staking requirement:
+              </Text>
+              <Text size="large">
+                <Amount amount={stakingRequirement}/><br/>
+              </Text>
+            </Box>
+             <Text size="small">(+ <Amount amount={(stakingRequirement - currentStakingRequirement)}/> to current)</Text>
           </Box>
           <Box align="center" justify="center" pad="small" direction="row">
             <Text  size="large" weight="bold" margin={{"right":"small"}}>
@@ -239,7 +244,7 @@ function ServiceNode({ match }) {
             </Text>
           </Box>
         </Box>
-        <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} />
+        <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} />
 
         <Box align="start" justify="start" pad="small" direction="row">
           <Box align="start" justify="center" pad="small">

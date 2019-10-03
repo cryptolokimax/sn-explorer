@@ -3,7 +3,9 @@ import moment from 'moment'
 import { Box, Text } from 'grommet'
 import NumberFormat from 'react-number-format'
 
-const Height = ({ height: heightObject, full = false, color = null }) => {
+const Height = (props) => {
+
+    const { height: heightObject, full = false, color = null } = props;
 
     const { height, heightDate, inFuture } = heightObject;
     return (

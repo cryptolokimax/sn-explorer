@@ -3,7 +3,7 @@ import { Box, Heading, Text, DataTable, Stack, Meter } from 'grommet'
 import { Address, Amount } from '../'
 import _ from 'lodash'
 
-const Contributors = ({ contributions, totalContributed, stakingRequirement, totalReserved }) => {
+const Contributors = ({ contributions, totalContributed, stakingRequirement, totalReserved, status = '' }) => {
 
   const [highlightPublicKey, setHighlightPublicKey] = useState('');
 
@@ -58,7 +58,7 @@ const Contributors = ({ contributions, totalContributed, stakingRequirement, tot
                     <Text textAlign="center">staked</Text></>
                   ):(
                      <><Heading truncate={false} size="small" textAlign="center"><Amount amount={(stakingRequirement - totalReserved)}/> (<Amount amount={(stakingRequirement - totalReserved) / stakingRequirement * 100} metric="%"/>)</Heading>
-                    <Text textAlign="center">available for contribution</Text></>
+                    <Text textAlign="center">{status === 'DEREGISTERED_BY_UNLOCK' ? 'wasn\'t contributed' : 'available for contribution' }</Text></>
                   )
                 }
               </Box>

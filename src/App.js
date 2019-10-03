@@ -11,7 +11,8 @@ import Status from './pages/Status'
 import StatsContainer from './lib/statsContainer'
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000',
+  uri: 'http://localhost:3999',
+  // uri: 'http://lokidashboard.com:3999/',
 });
 
 
