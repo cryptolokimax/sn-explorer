@@ -5,15 +5,15 @@ import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
 import ServiceNode from './pages/ServiceNode'
+import Index from './pages/Index'
+import Status from './pages/Status'
+
+import StatsContainer from './lib/statsContainer'
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000',
 });
 
-
-function Index() {
-  return <h2>Home</h2>;
-}
 
 function Users() {
   return <h2>Users</h2>;
@@ -32,21 +32,30 @@ const theme = {
   },
 };
 
+
+
 function AppRouter() {
   return (
-    <Router>
-      <ApolloProvider client={client}>
+      <Router>
         <Grommet theme={theme} full>
           <nav>
           </nav>
-
           <Route path="/" exact component={Index} />
           <Route path="/sn/:publicKey" component={ServiceNode} />
-          <Route path="/users/" component={Users} />
+          <Route path="/status/:statParam/:pageParam?" component={Status} />
         </Grommet>
-      </ApolloProvider>
-    </Router>
+      </Router>
   );
 }
 
-export default AppRouter;
+function AppContainer() {
+  return (
+    <ApolloProvider client={client}>
+      <StatsContainer.Provider initialState={{data: {}}}>
+        <AppRouter />
+      </StatsContainer.Provider>
+    </ApolloProvider>
+  )
+}
+
+export default AppContainer;
