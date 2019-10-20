@@ -60,7 +60,7 @@ function Height({ match }) {
     }
 
     
-    if (currentHeight < 1 || !blockDiff) return '';
+    if (currentHeight < 1 || blockDiff === null) return '';
 
     const inFuture = blockDiff > 0;
 
