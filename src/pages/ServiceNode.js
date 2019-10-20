@@ -7,7 +7,7 @@ import _ from 'lodash'
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 
-import { Address, UptimeProof, Height, Amount } from '../components'
+import { Address, TimerCounter, Height, Amount } from '../components'
 
 import { 
   Contributors,
@@ -150,6 +150,7 @@ function ServiceNode({ match }) {
   const { serviceNode: serviceNodeFrequent } = dataFrequent;
 
   const { 
+          active,
           requestedUnlockHeight,
           registrationHeight,
           stakingRequirement,
@@ -158,6 +159,7 @@ function ServiceNode({ match }) {
           operatorFee,
           contributions,
           earnedDowntimeBlocks,
+          lastRewardBlockHeight,
           downtimeBlocksHistories,
           totalReward,
           rewardHistories,
@@ -214,7 +216,7 @@ function ServiceNode({ match }) {
             )
           }
           <Box align="center" justify="center" pad="small" flex="grow" wrap={false} />
-          <UptimeProof lastUptimeProof={lastUptimeProof} full size='large' color='light-1'/>
+          <TimerCounter title="Last uptime proof:" dateTime={lastUptimeProof} size='large' color='light-1' warningThreshold={90} textStyle={{ minWidth: 230 }} />
         </Box>
         <Box align="center" justify="between" pad="small" direction="row" height="small">
           <Box align="center" justify="center" pad="medium" direction="row">
@@ -275,7 +277,7 @@ function ServiceNode({ match }) {
               <RewardHistories rewardHistories={rewardHistories} />
             </Box>
           </Box>
-          <NextReward stats={stats} rewardHistories={rewardHistories} />
+          { active && <NextReward stats={stats} lastRewardBlockHeight={lastRewardBlockHeight} rewardHistories={rewardHistories} />}
         </Box>
         <Box align="start" justify="start" pad="small" direction="row">
           <Box align="start" justify="center" pad="small">

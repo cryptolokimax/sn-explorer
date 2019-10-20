@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { Grommet, Box, Image, Heading, TextInput, Text, CheckBox, DataTable , grommet } from 'grommet'
+import { Box, Heading, TextInput, Text } from 'grommet'
 import _ from 'lodash'
 import { Link, useHistory} from "react-router-dom";
 import { useQuery } from '@apollo/react-hooks';

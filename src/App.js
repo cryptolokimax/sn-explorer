@@ -7,6 +7,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import ServiceNode from './pages/ServiceNode'
 import Index from './pages/Index'
 import Status from './pages/Status'
+import Height from './pages/Height'
 
 import StatsContainer from './lib/statsContainer'
 
@@ -15,10 +16,6 @@ const client = new ApolloClient({
   // uri: 'http://lokidashboard.com:3999/',
 });
 
-
-function Users() {
-  return <h2>Users</h2>;
-}
 
 const theme = {
   global: {
@@ -42,6 +39,7 @@ function AppRouter() {
           <nav>
           </nav>
           <Route path="/" exact component={Index} />
+          <Route path="/height/:height" component={Height} />
           <Route path="/sn/:publicKey" component={ServiceNode} />
           <Route path="/status/:statParam/:pageParam?" component={Status} />
         </Grommet>

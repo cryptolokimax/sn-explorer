@@ -5,7 +5,7 @@ import NumberFormat from 'react-number-format'
 
 const Height = (props) => {
 
-    const { height: heightObject, full = false, color = null } = props;
+    const { height: heightObject, color = null } = props;
 
     const { height, heightDate, inFuture } = heightObject;
     return (

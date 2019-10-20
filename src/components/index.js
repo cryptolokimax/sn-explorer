@@ -1,5 +1,5 @@
 export { default as Address } from './Address'
-export { default as UptimeProof } from './UptimeProof'
+export { default as TimerCounter } from './TimerCounter'
 export { default as Height } from './Height'
 export { default as Amount } from './Amount'
 export { default as Status } from './Status'

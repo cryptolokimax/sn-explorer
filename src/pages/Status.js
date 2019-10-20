@@ -1,6 +1,6 @@
-import React, { useState } from "react"
+import React from "react"
 import { useHistory } from "react-router-dom"
-import { Grommet, Box, Image, Heading, Text, CheckBox, DataTable, grommet, Button } from 'grommet'
+import { Box, Heading, Text, DataTable, Button } from 'grommet'
 import { LinkPrevious, LinkNext } from 'grommet-icons'
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
@@ -13,7 +13,7 @@ const GET_SERVICE_NODE_BY_STATUS = gql`
       id
       publicKey
       active
-      status
+      status 
       operatorFee
       registrationHeight {
         height
