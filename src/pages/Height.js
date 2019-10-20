@@ -41,7 +41,7 @@ function Height({ match }) {
     const [blockDiff, setBlockDiff] = useState(null)
 
     useEffect(() => {
-        console.log('blockDiff', blockDiff)
+        // fetching data for last mined block, which just was current
         if (blockDiff === -1) refetch();
     }, [blockDiff, refetch]);
 
@@ -49,7 +49,7 @@ function Height({ match }) {
     const currentHeightDate = _.get(stats, "data.generalStatistics.currentHeight.heightDate", 0);
 
     useEffect(() => {
-        setBlockDiff (height - currentHeight);
+        setBlockDiff (currentHeight > 0 ? (height - currentHeight) : null);
     }, [currentHeight, height]);
 
     if (!isValid) {
@@ -60,7 +60,7 @@ function Height({ match }) {
     }
 
     
-    if (currentHeight < 1) return '';
+    if (currentHeight < 1 || !blockDiff) return '';
 
     const inFuture = blockDiff > 0;
 
