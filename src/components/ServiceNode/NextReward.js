@@ -32,7 +32,7 @@ const NextReward = ({ stats, lastRewardBlockHeight, rewardHistories }) => {
               {moment().add(nextRewardDuration).format("MMM Do YYYY, h:mm a")}
             </Text>
             <Text>
-              (in {nextRewardDuration.days() ? (nextRewardDuration.asDays() * 24) : nextRewardDuration.hours()} hrs {nextRewardDuration.minutes()} min)
+              (in {nextRewardDuration.days() ? ((nextRewardDuration.days() * 24) + nextRewardDuration.hours()) : nextRewardDuration.hours()} hrs {nextRewardDuration.minutes()} min)
             </Text>
       </Box>
     );
