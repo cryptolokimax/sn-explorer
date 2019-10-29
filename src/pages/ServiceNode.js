@@ -1,7 +1,7 @@
 import React from "react"
 import moment from 'moment'
 import { Box, Heading, Text, DataTable, Meter, WorldMap } from 'grommet'
-import { LinkPrevious, StatusWarning } from 'grommet-icons'
+import { LinkPrevious, StatusWarning, StatusGood } from 'grommet-icons'
 import { useHistory } from "react-router-dom"
 import _ from 'lodash'
 import { useQuery } from '@apollo/react-hooks';
@@ -112,6 +112,7 @@ const GET_SERVICE_NODE_FREQUENT = gql`
       serviceNode(publicKey: $publicKey) {
         id
         lastUptimeProof
+        storageServerReachable
         status
     }
   }
@@ -173,6 +174,7 @@ function ServiceNode({ match }) {
   const { 
           status,
           lastUptimeProof,
+          storageServerReachable,
         } = serviceNodeFrequent;
 
   const decomDowntimeBlocks = 720 - earnedDowntimeBlocks;
@@ -216,7 +218,11 @@ function ServiceNode({ match }) {
             )
           }
           <Box align="center" justify="center" pad="small" flex="grow" wrap={false} />
-          <TimerCounter title="Last uptime proof:" dateTime={lastUptimeProof} size='large' color='light-1' warningThreshold={90} textStyle={{ minWidth: 230 }} />
+            {storageServerReachable ? <StatusGood color="light-1" /> : <StatusWarning color="status-error" /> }
+            <Text color="light-1" size="large" margin={{"left":"small", "right":"small"}}>
+              {storageServerReachable ? 'Storage Server Reachable' : 'Storage Server NOT Reachable' }
+            </Text>
+            <TimerCounter title="Last uptime proof:" dateTime={lastUptimeProof} size='large' color='light-1' warningThreshold={90} textStyle={{ minWidth: 230 }} />
         </Box>
         <Box align="center" justify="between" pad="small" direction="row" height="small">
           <Box align="center" justify="center" pad="medium" direction="row">
