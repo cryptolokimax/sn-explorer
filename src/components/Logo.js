@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-const SvgComponent = props => (
+const SvgComponent = (props) => (
   <svg
     style={{
       isolation: 'isolate',
@@ -55,6 +55,6 @@ const SvgComponent = props => (
       />
     </g>
   </svg>
-)
+);
 
-export default SvgComponent
+export default SvgComponent;
