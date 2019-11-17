@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 import { Grommet } from 'grommet';
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 
-import ServiceNode from './pages/ServiceNode'
-import Index from './pages/Index'
-import Status from './pages/Status'
-import Height from './pages/Height'
+import ServiceNode from './pages/ServiceNode';
+import Index from './pages/Index';
+import Status from './pages/Status';
+import Height from './pages/Height';
 
-import StatsContainer from './lib/statsContainer'
+import StatsContainer from './lib/statsContainer';
 
 const client = new ApolloClient({
-  // uri: 'http://localhost:3999',
-  uri: 'http://lokidashboard.com:3999/',
+  uri: 'http://localhost:3999',
+  // uri: 'http://lokidashboard.com:3999/',
 });
 
 
@@ -31,30 +31,28 @@ const theme = {
 };
 
 
-
 function AppRouter() {
   return (
-      <Router>
-        <Grommet theme={theme} full>
-          <nav>
-          </nav>
+    <Router>
+      <Grommet theme={theme} full>
+          <nav />
           <Route path="/" exact component={Index} />
           <Route path="/height/:height" component={Height} />
           <Route path="/sn/:publicKey" component={ServiceNode} />
           <Route path="/status/:statParam/:pageParam?" component={Status} />
         </Grommet>
-      </Router>
+    </Router>
   );
 }
 
 function AppContainer() {
   return (
     <ApolloProvider client={client}>
-      <StatsContainer.Provider initialState={{data: {}}}>
+      <StatsContainer.Provider initialState={{ data: {} }}>
         <AppRouter />
       </StatsContainer.Provider>
     </ApolloProvider>
-  )
+  );
 }
 
 export default AppContainer;
