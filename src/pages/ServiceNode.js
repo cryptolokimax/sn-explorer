@@ -183,7 +183,7 @@ function ServiceNode({ match }) {
     storageServerReachable,
   } = serviceNodeFrequent;
 
-  const decomDowntimeBlocks = 720 - earnedDowntimeBlocks;
+  const decomDowntimeBlocks = 1440 - earnedDowntimeBlocks;
   const downtimeDuration = moment.duration((2 * earnedDowntimeBlocks), 'minutes');
 
   const currentVersion = _.get(versionHistories, '[0].version.version');
@@ -268,7 +268,7 @@ function ServiceNode({ match }) {
           <Height height={registrationHeight} />
         </Box>
 
-        <Box align={r({default: 'start', medium: 'end'})} justify="center" direction="column" style={{ alignSelf: 'flex-start', paddingBottom: '40px' }}>
+        <Box align={r({ default: 'start', medium: 'end' })} justify="center" direction="column" style={{ alignSelf: 'flex-start', paddingBottom: '40px' }}>
           <Box align={responsiveAlign} justify={responsiveAlign} pad="small" direction={responsiveDirection}>
             <Text size="large" weight="bold" margin={{ right: 'small' }}>
                 Staking requirement:
@@ -309,9 +309,9 @@ function ServiceNode({ match }) {
                 <span>
                   {earnedDowntimeBlocks}
                   {' '}
-                  blocks 
+                  blocks
                   {' '}
-                  <span style={{whiteSpace: 'nowrap'}}>
+                  <span style={{ whiteSpace: 'nowrap' }}>
                     (~
                     {' '}
                     {downtimeDuration.days() ? (24 * downtimeDuration.days() + downtimeDuration.hours()) : downtimeDuration.hours()}
@@ -338,7 +338,7 @@ function ServiceNode({ match }) {
           <Heading size="small">
               Reward earned:
             {' '}
-            {<Amount amount={totalReward} />}
+            <Amount amount={totalReward} />
           </Heading>
           <Box align="center" justify="start" pad="small" direction={responsiveDirection}>
             <RewardHistories rewardHistories={rewardHistories} />
@@ -405,7 +405,7 @@ function ServiceNode({ match }) {
           justify="center"
           pad="small"
           margin={{ left: 'xlarge' }}
-          style={r({default: {height: 200}, medium: {width: '100%', maxWidth: '950px'}})}
+          style={r({ default: { height: 200 }, medium: { width: '100%', maxWidth: '950px' } })}
         >
           <WorldMap
             color="light-5"

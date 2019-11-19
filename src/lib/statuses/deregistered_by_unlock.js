@@ -9,7 +9,7 @@ import {
 
 const query = gql`
     query ServiceNodeByStatus($offset: Int, $limit: Int) {
-        serviceNodes(status: UNLOCK_REQUESTED, offset: $offset, limit: $limit, orderBy: requestedUnlockHeightHeight, direction: ASC) {
+        serviceNodes(status: DEREGISTERED_BY_UNLOCK, offset: $offset, limit: $limit, orderBy: requestedUnlockHeightHeight, direction: DESC) {
             publicKey
             operatorFee
             requestedUnlockHeight {
@@ -54,7 +54,7 @@ const table = (serviceNodes) => {
             )),
         },
         {
-          header: 'Unlock height',
+          header: 'Deregistered on',
           property: 'height',
           render: (d) => (d.height
             && (

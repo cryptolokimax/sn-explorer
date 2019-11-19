@@ -9,10 +9,10 @@ import {
 
 const query = gql`
     query ServiceNodeByStatus($offset: Int, $limit: Int) {
-        serviceNodes(status: UNLOCK_REQUESTED, offset: $offset, limit: $limit, orderBy: requestedUnlockHeightHeight, direction: ASC) {
+        serviceNodes(status: DEREGISTERED_BY_PENALTY, offset: $offset, limit: $limit, orderBy: stateHeightHeight, direction: DESC) {
             publicKey
             operatorFee
-            requestedUnlockHeight {
+            stateHeight {
                 height
                 heightDate
             }
@@ -28,7 +28,7 @@ const table = (serviceNodes) => {
     operatorFee: s.operatorFee,
     availableForStake: s.availableForStake,
     contributorsNum: s.contributorsNum,
-    height: s.requestedUnlockHeight,
+    height: s.stateHeight,
   }));
 
   return (
@@ -54,7 +54,7 @@ const table = (serviceNodes) => {
             )),
         },
         {
-          header: 'Unlock height',
+          header: 'Last state change on',
           property: 'height',
           render: (d) => (d.height
             && (

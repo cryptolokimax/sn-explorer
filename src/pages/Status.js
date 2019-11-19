@@ -9,16 +9,38 @@ import { gql } from 'apollo-boost';
 import {
   awaitingContributionQuery,
   awaitingCongtributionTable,
+  unlockRequestedQuery,
+  deregisteredByUnlockQuery,
+  deregisteredByPenaltyQuery,
   activeQuery,
+  decomissionedQuery,
   activeTable,
+  unlockRequestedTable,
+  deregisteredByUnlockTable,
+  deregisteredByPenaltyTable,
+  decomissionedTable,
 } from '../lib/statuses';
 
 import {
   Status, Header,
 } from '../components';
 
-const queries = { AWAITING_CONTRIBUTION: awaitingContributionQuery, ACTIVE: activeQuery };
-const tables = { AWAITING_CONTRIBUTION: awaitingCongtributionTable, ACTIVE: activeTable };
+const queries = {
+  AWAITING_CONTRIBUTION: awaitingContributionQuery,
+  ACTIVE: activeQuery,
+  UNLOCK_REQUESTED: unlockRequestedQuery,
+  DEREGISTERED_BY_UNLOCK: deregisteredByUnlockQuery,
+  DEREGISTERED_BY_PENALTY: deregisteredByPenaltyQuery,
+  DECOMISSIONED: decomissionedQuery,
+};
+const tables = {
+  AWAITING_CONTRIBUTION: awaitingCongtributionTable,
+  ACTIVE: activeTable,
+  UNLOCK_REQUESTED: unlockRequestedTable,
+  DEREGISTERED_BY_UNLOCK: deregisteredByUnlockTable,
+  DEREGISTERED_BY_PENALTY: deregisteredByPenaltyTable,
+  DECOMISSIONED: decomissionedTable,
+};
 
 
 const GET_SERVICE_NODE_STATS = gql`
