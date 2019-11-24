@@ -58,7 +58,7 @@ const Address = ({ address, size = 'medium', type = 'node' }) => {
           content={address}
           styles={{
             wrapper: {
-              display: r({default: 'table-caption', medium: 'flex'}),
+              display: r({ default: 'table-caption', medium: 'flex' }),
             },
             floater: {
               maxWidth: type === 'node' ? 900 : 1500,
@@ -78,9 +78,7 @@ const Address = ({ address, size = 'medium', type = 'node' }) => {
 
           }}
         >
-          {type === 'node'
-            ? <AddressLink to={`/sn/${address}`}>{`${address.substr(0, 8)}…${address.substr(-4)}`}</AddressLink>
-            : `${address.substr(0, 8)}…${address.substr(-4)}` }
+          <AddressLink to={`/${type === 'node' ? 'sn' : 'user'}/${address}`}>{`${address.substr(0, 8)}…${address.substr(-4)}`}</AddressLink>
         </Floater>
       </Text>
       <Button onClick={setCopied} icon={<CopyIcon size={size} />} />

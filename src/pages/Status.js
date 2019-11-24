@@ -1,9 +1,7 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import {
-  Box, Heading, Text, Button,
+  Box, Heading, Text,
 } from 'grommet';
-import { LinkPrevious, LinkNext } from 'grommet-icons';
 import { useQuery } from '@apollo/react-hooks';
 import { gql } from 'apollo-boost';
 import {
@@ -19,10 +17,10 @@ import {
   deregisteredByUnlockTable,
   deregisteredByPenaltyTable,
   decomissionedTable,
-} from '../lib/statuses';
+} from '../tables/statuses';
 
 import {
-  Status, Header,
+  Status, Header, Pager,
 } from '../components';
 
 const queries = {
@@ -63,10 +61,8 @@ function StatusPage({ match }) {
 
   const offset = (page - 1) * resultsPerPage;
 
-  const history = useHistory();
-
   const { loading, error, data } = useQuery(queries[status], {
-    variables: { status, offset, limit: resultsPerPage },
+    variables: { offset, limit: resultsPerPage },
   });
 
   const { loading: loadingStats, error: errorStats, data: dataStats } = useQuery(GET_SERVICE_NODE_STATS);
@@ -110,27 +106,7 @@ function StatusPage({ match }) {
         {tables[status](serviceNodes)}
       </Box>
 
-      <Box align="center" justify="center" pad="large" direction="row">
-        <Button
-          icon={<LinkPrevious />}
-          label="Previous"
-          onClick={() => { history.push(`/status/${statParam}/${page - 1}`); }}
-          disabled={page === 1}
-        />
-        <Text style={{ paddingLeft: 15, paddingRight: 15 }}>
-          {page}
-          {' '}
-of
-          {' '}
-          {numOfPages}
-        </Text>
-        <Button
-          icon={<LinkNext />}
-          label="Next"
-          onClick={() => { history.push(`/status/${statParam}/${page + 1}`); }}
-          disabled={page === numOfPages}
-        />
-      </Box>
+      <Pager page={page} numOfPages={numOfPages} url={`/status/${statParam}/`} />
 
     </>
   );

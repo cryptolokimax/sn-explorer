@@ -8,12 +8,14 @@ import ServiceNode from './pages/ServiceNode';
 import Index from './pages/Index';
 import Status from './pages/Status';
 import Height from './pages/Height';
+import Users from './pages/Users';
+import User from './pages/User';
 
 import StatsContainer from './lib/statsContainer';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:3999',
-  // uri: 'http://lokidashboard.com:3999/',
+  // uri: 'http://localhost:3999',
+  uri: 'http://lokidashboard.com:3999/',
 });
 
 
@@ -35,12 +37,14 @@ function AppRouter() {
   return (
     <Router>
       <Grommet theme={theme} full>
-          <nav />
-          <Route path="/" exact component={Index} />
-          <Route path="/height/:height" component={Height} />
-          <Route path="/sn/:publicKey" component={ServiceNode} />
-          <Route path="/status/:statParam/:pageParam?" component={Status} />
-        </Grommet>
+        <nav />
+        <Route path="/" exact component={Index} />
+        <Route path="/height/:height" component={Height} />
+        <Route path="/sn/:publicKey" component={ServiceNode} />
+        <Route path="/users/:pageParam?" component={Users} />
+        <Route path="/user/:address/:pageParam?" component={User} />
+        <Route path="/status/:statParam/:pageParam?" component={Status} />
+      </Grommet>
     </Router>
   );
 }
