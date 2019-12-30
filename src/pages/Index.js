@@ -155,7 +155,7 @@ function Index() {
           <Box>
             <Status status="AWAITING_CONTRIBUTION" style={{ fontSize: '30px', paddingLeft: '15px', paddingRight: '15px' }} />
             <Box pad={{ horizontal: 'small', vertical: 'large' }}>
-              {tables.AWAITING_CONTRIBUTION(dataAwait.serviceNodes, true)}
+              {tables.AWAITING_CONTRIBUTION(dataAwait.serviceNodes, 'false')}
             </Box>
             <Box alignSelf="center" style={{ display: 'inline-block' }}>
               {awaitingCount && awaitingCount.length > 0 && awaitingCount[0] > 10 && (
@@ -171,7 +171,7 @@ function Index() {
           <Box>
             <Status status="DECOMISSIONED" style={{ fontSize: '30px', paddingLeft: '15px', paddingRight: '15px' }} />
             <Box pad={{ horizontal: 'small', vertical: 'large' }}>
-              {tables.DECOMISSIONED(dataDecom.serviceNodes, true)}
+              {tables.DECOMISSIONED(dataDecom.serviceNodes, 'true')}
             </Box>
             <Box alignSelf="center" style={{ display: 'inline-block' }}>
               {decomissionedCount && decomissionedCount.length > 0 && decomissionedCount[0] > 10 && (

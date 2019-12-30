@@ -6,3 +6,4 @@ export { default as VersionHistories } from './VersionHistories';
 export { default as PublicIPHistories } from './PublicIPHistories';
 export { default as SwarmHistories } from './SwarmHistories';
 export { default as NextReward } from './NextReward';
+export { default as WorldMap } from './WorldMap';

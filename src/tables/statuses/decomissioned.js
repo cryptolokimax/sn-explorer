@@ -25,7 +25,7 @@ const query = gql`
 `;
 
 
-const table = (serviceNodes, short = false) => {
+const table = (serviceNodes, short = 'false') => {
   const snData = serviceNodes.map((s) => ({
     publicKey: s.publicKey,
     operatorFee: s.operatorFee,
@@ -38,7 +38,7 @@ const table = (serviceNodes, short = false) => {
   const columns = [{
     header: 'Service Node', property: 'publicKey', align: 'start', render: (d) => (d.publicKey && <Address address={d.publicKey} />),
   }];
-  if (!short) {
+  if (short === 'false') {
     columns.push({
       header: 'Operator Fee',
       property: 'operatorFee',

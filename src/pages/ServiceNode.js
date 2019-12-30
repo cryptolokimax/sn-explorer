@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 import {
-  Box, Heading, Text, Meter, WorldMap,
+  Box, Heading, Text, Meter,
 } from 'grommet';
 import { StatusWarning, StatusGood } from 'grommet-icons';
 import _ from 'lodash';
@@ -22,6 +22,7 @@ import {
   VersionHistories,
   PublicIPHistories,
   SwarmHistories,
+  WorldMap,
 } from '../components/ServiceNode';
 
 
@@ -58,6 +59,9 @@ const GET_SERVICE_NODE = gql`
       publicIp {
         latitude
         longitude
+        country {
+          country
+        }
       }
       version {
         version
@@ -295,7 +299,7 @@ function ServiceNode({ match }) {
           </Text>
         </Box>
       </Box>
-      <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} />
+      <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} publicKey={publicKey}/>
 
       <Box align="start" justify="start" pad="small" direction={responsiveDirection}>
         <Box align="start" justify="center" pad="small">
@@ -408,17 +412,7 @@ function ServiceNode({ match }) {
           style={r({ default: { height: 200 }, medium: { width: '100%', maxWidth: '950px' } })}
         >
           <WorldMap
-            color="light-5"
-            onSelectPlace={(lat, lon) => {}}
-            places={[
-              {
-                name: '',
-                location: [publicIp.latitude, publicIp.longitude],
-                color: 'accent-2',
-                onClick: (name) => {},
-              },
-            ]}
-            selectColor="accent-2"
+            publicIp={publicIp}
           />
         </Box>
       </Box>

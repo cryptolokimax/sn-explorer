@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import {
-  Box, Heading, Text, DataTable, Stack, Meter,
+  Box, Heading, Text, DataTable, Stack, Meter, Button,
 } from 'grommet';
 import _ from 'lodash';
+import useClipboard from 'react-use-clipboard';
 import { Address, Amount } from '..';
 
 import useResponsive from '../../lib/useResponsive';
+import calcMinimumContribution from '../../lib/calcMinimumContribution';
 
 const Contributors = ({
-  contributions, totalContributed, stakingRequirement, totalReserved, status = '',
+  contributions, totalContributed, stakingRequirement, totalReserved, status = '', publicKey,
 }) => {
   const [highlightPublicKey, setHighlightPublicKey] = useState('');
+  const [isCopied, setCopied] = useClipboard(publicKey);
+
   const r = useResponsive();
 
   const contributorData = _.sortBy(_.uniqBy(contributions, (c) => (c.contributor ? c.contributor.address : '')), (c) => !c.isOperator).map((c) => ({
@@ -36,6 +40,10 @@ const Contributors = ({
       color: 'light-1',
     });
   }
+
+  const fullyStaked = (stakingRequirement === totalContributed && totalContributed === totalReserved);
+
+  const minStakingAmount = (totalContributed < stakingRequirement && contributions && contributions.length) ? calcMinimumContribution((stakingRequirement - totalContributed), contributions.length) : 0;
 
   const columns = r({
     default: [
@@ -78,31 +86,32 @@ const Contributors = ({
   });
 
   return (
-    <Box align={r({ default: 'left', medium: 'center' })} justify="start" pad={r({ default: 'small', medium: 'medium' })} direction={r({ default: 'column', medium: 'row' })}>
-      <Box align="start" justify="center" pad="small">
-        <Heading size="small" margin={{ bottom: 'large' }}>
+    <Box pad={r({ default: 'small', medium: 'medium' })}>
+      <Box align={r({ default: 'left', medium: 'center' })} justify="start" direction={r({ default: 'column', medium: 'row' })}>
+        <Box align="start" justify="center" pad="small">
+          <Heading size="small" margin={{ bottom: 'large' }}>
               Contributors
-        </Heading>
-        <Box align="center" justify="center" pad="small">
-          <DataTable
-            columns={columns}
-            data={contributorData}
-            background={contributorHighlighted}
-          />
+          </Heading>
+          <Box align="center" justify="center" pad="small">
+            <DataTable
+              columns={columns}
+              data={contributorData}
+              background={contributorHighlighted}
+            />
+          </Box>
         </Box>
-      </Box>
-      <Box
-        align={r({ default: 'left', medium: 'center' })}
-        justify="center"
-        pad="small"
-        margin={r({ default: {}, medium: { left: 'xlarge' } })}
-        style={{width: 'fit-content'}}
-      >
-        <Stack anchor="center">
-          <Meter values={contributorGraphData} round={false} type="circle" />
-          <Box align={r({ default: 'left', medium: 'center' })} justify="center" pad="small">
-            {
-                  (stakingRequirement === totalContributed && totalContributed === totalReserved) ? (
+        <Box
+          align={r({ default: 'left', medium: 'center' })}
+          justify="center"
+          pad="small"
+          margin={r({ default: {}, medium: { left: 'xlarge' } })}
+          style={{ width: 'fit-content' }}
+        >
+          <Stack anchor="center">
+            <Meter values={contributorGraphData} round={false} type="circle" />
+            <Box align={r({ default: 'left', medium: 'center' })} justify="center" pad="small">
+              {
+                  (fullyStaked) ? (
                     <>
                       <Heading truncate={false} size="small" textAlign="center">100%</Heading>
                       <Text textAlign="center">staked</Text>
@@ -117,14 +126,36 @@ const Contributors = ({
                         <Amount amount={(stakingRequirement - totalReserved) / stakingRequirement * 100} metric="%" />
 )
                       </Heading>
-                      <Text textAlign="center">{status === 'DEREGISTERED_BY_UNLOCK' ? 'wasn\'t contributed' : 'available for contribution' }</Text>
+                      <Text textAlign="center">
+                        {status === 'DEREGISTERED_BY_UNLOCK' ? 'wasn\'t contributed' : (
+                          <span>
+                            available for contribution
+                            <br />
+                            (min
+                            {' '}
+                            <Amount amount={minStakingAmount} />
+                            )
+                          </span>
+                        ) }
+                      </Text>
 
                     </>
                   )
                 }
-          </Box>
-        </Stack>
+            </Box>
+          </Stack>
+        </Box>
       </Box>
+      {!fullyStaked && (
+      <Text>
+        <a href="https://docs.loki.network/ServiceNodes/GUIStakingGuide/" rel="noopener noreferrer" target="_blank">Follow GUI staking guide</a>
+        {' '}
+       to contribute <Amount amount={minStakingAmount} /> or more to this Service Node.
+        {' '}
+        <Button onClick={setCopied} label="Copy SN public key" />
+        {' '}
+      </Text>
+      )}
     </Box>
   );
 };

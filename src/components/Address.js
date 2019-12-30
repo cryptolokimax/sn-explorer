@@ -27,9 +27,13 @@ const AddressLink = styled(Link)`
 `;
 
 const Address = ({ address, size = 'medium', type = 'node' }) => {
+  const [isCopied, setCopied] = useClipboard(address);
+
+  const r = useResponsive();
+  
   const textSizes = {
     medium: '20px',
-    large: '40px',
+    large: r({default: '30px', medium: '40px'}),
     default: '36px',
   };
   const margin = {
@@ -42,9 +46,7 @@ const Address = ({ address, size = 'medium', type = 'node' }) => {
     large: 'bold',
     default: 'bold',
   };
-  const [isCopied, setCopied] = useClipboard(address);
 
-  const r = useResponsive();
 
   return (
     <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>

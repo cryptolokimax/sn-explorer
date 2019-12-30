@@ -4,15 +4,18 @@ import { useHistory } from 'react-router-dom';
 
 import { LinkPrevious, LinkNext } from 'grommet-icons';
 
+import useResponsive from '../lib/useResponsive';
 
 const Pager = ({ page, numOfPages = null, url }) => {
   const history = useHistory();
 
+  const r = useResponsive();
+
   return (
-    <Box align="center" justify="center" pad="large" direction="row">
+    <Box align="center" justify="center" pad={r({default: 'small', medium: 'large'})} direction="row">
       <Button
         icon={<LinkPrevious />}
-        label="Previous"
+        label={r({default: '', medium: "Previous"})}
         onClick={() => { history.push(`${url}${page - 1}`); }}
         disabled={page === 1}
       />
@@ -23,7 +26,7 @@ const Pager = ({ page, numOfPages = null, url }) => {
       </Text>
       <Button
         icon={<LinkNext />}
-        label="Next"
+        label={r({default: '', medium: "Next"})}
         onClick={() => { history.push(`${url}${page + 1}`); }}
         disabled={numOfPages && page === numOfPages}
       />

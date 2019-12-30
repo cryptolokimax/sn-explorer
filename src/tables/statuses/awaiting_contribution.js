@@ -8,6 +8,8 @@ import {
   Address, Amount,
 } from '../../components';
 
+import calcMinimumContribution from '../../lib/calcMinimumContribution';
+
 const query = gql`
     query ServiceNodeByStatus($offset: Int, $limit: Int) {
         serviceNodes(status: AWAITING_CONTRIBUTION, offset: $offset, limit: $limit, orderBy: availableForStake, direction: ASC) {
@@ -23,7 +25,7 @@ const query = gql`
 `;
 
 
-const table = (serviceNodes) => {
+const table = (serviceNodes, short = 'false') => {
   const snData = serviceNodes.map((s) => ({
     publicKey: s.publicKey,
     stakingRequirement: s.stakingRequirement,
@@ -33,75 +35,104 @@ const table = (serviceNodes) => {
     percent: (s.stakingRequirement - s.availableForStake) / s.stakingRequirement * 100,
     contributorsNum: s.contributorsNum,
     availableContributorsNum: (4 - s.contributorsNum),
-    minStakingAmount: s.availableForStake / (4 - s.contributorsNum),
+    minStakingAmount: calcMinimumContribution(s.availableForStake, s.contributorsNum),
   }));
 
+  const columns = [{
+    header: 'Service Node', property: 'publicKey', align: 'start', render: (d) => (d.publicKey && <Address address={d.publicKey} />),
+  }];
+  if (short === 'false') {
+    columns.push({
+      header: 'Operator Fee',
+      property: 'operatorFee',
+      render: (d) => (d.operatorFee
+          && (
+          <Amount amount={d.operatorFee} metric="%" />
+          )),
+    });
+
+    columns.push({
+      property: 'percent',
+      header: 'Staked',
+      render: (d) => (
+        <Box pad={{ vertical: 'xsmall' }}>
+          <Meter
+            values={[{ value: d.percent }]}
+            thickness="small"
+            size="small"
+          />
+          <Text size="xsmall">
+            <Amount amount={d.staked} metric="" />
+            {' '}
+        of
+            {' '}
+            <Amount amount={d.stakingRequirement} />
+            {' '}
+        (
+            <Amount amount={d.percent} metric="%" />
+        )
+          </Text>
+        </Box>
+      ),
+    });
+
+    columns.push({
+      header: 'Available for stake',
+      property: 'availableForStake',
+      render: (d) => (d.availableForStake
+      && (
+      <Box pad={{ vertical: 'xsmall' }}>
+        <Amount amount={d.availableForStake} />
+        <Text size="xsmall">
+          {d.availableContributorsNum}
+          {' '}
+          of 4
+          {' '}
+          {pluralize('slot', d.availableContributorsNum)}
+          {' '}
+          available
+        </Text>
+      </Box>
+      )),
+    });
+
+    columns.push({
+      header: 'Min. contribution',
+      property: 'minStakingAmount',
+      render: (d) => (d.minStakingAmount
+          && (
+          <Amount amount={d.minStakingAmount} />
+          )),
+    });
+  }
+  if (short === 'true') {
+    columns.push({
+      header: 'Available for stake',
+      property: 'availableForStake',
+      render: (d) => (d.availableForStake
+        && (
+        <Box pad={{ vertical: 'xsmall' }}>
+          <Amount amount={d.availableForStake} />
+          <Text size="xsmall">
+            {d.availableContributorsNum}
+            {' '}
+            of 4
+            {' '}
+            {pluralize('slot', d.availableContributorsNum)}
+            {' '}
+            available
+          </Text>
+          <Text size="xsmall">
+Fee:
+            <Amount amount={d.operatorFee} metric="%" />
+          </Text>
+        </Box>
+        )),
+    });
+  }
   return (
     <DataTable
-      columns={[
-        {
-          header: 'Service Node', property: 'publicKey', align: 'start', render: (d) => (d.publicKey && <Address address={d.publicKey} />),
-        },
-        {
-          header: 'Operator Fee',
-          property: 'operatorFee',
-          render: (d) => (d.operatorFee
-                && (
-                <Amount amount={d.operatorFee} metric="%" />
-                )),
-        },
-        {
-          property: 'percent',
-          header: 'Staked',
-          render: (d) => (
-            <Box pad={{ vertical: 'xsmall' }}>
-              <Meter
-                values={[{ value: d.percent }]}
-                thickness="small"
-                size="small"
-              />
-              <Text size="xsmall">
-                <Amount amount={d.staked} metric="" />
-                {' '}
-              of
-                {' '}
-                <Amount amount={d.stakingRequirement} />
-                {' '}
-              (
-                <Amount amount={d.percent} metric="%" />
-              )
-              </Text>
-            </Box>
-          ),
-        },
-        {
-          header: 'Available for stake',
-          property: 'availableForStake',
-          render: (d) => (d.availableForStake
-            && (
-            <Box pad={{ vertical: 'xsmall' }}>
-              <Amount amount={d.availableForStake} />
-              <Text size="xsmall">
-                {d.availableContributorsNum}
-                {' '}
-                of 4
-                {' '}
-                {pluralize('slot', d.availableContributorsNum)}
-                {' '}
-                available
-              </Text>
-            </Box>
-            )),
-        },
-        {
-          header: 'Min. contribution',
-          property: 'minStakingAmount',
-          render: (d) => (d.minStakingAmount
-              && (
-              <Amount amount={d.minStakingAmount} />
-              )),
-        },
-      ]}
+      columns={columns}
       data={snData}
       resizeable
     />
