@@ -1,9 +1,19 @@
 import React from 'react';
 import { Button } from 'grommet';
+import styled from 'styled-components';
 import NumberFormat from 'react-number-format';
 import Floater from 'react-floater';
 import useClipboard from 'react-use-clipboard';
 import useResponsive from '../lib/useResponsive';
+
+const CopyButton = styled(Button)`
+    :hover {
+        opacity: 0.9
+    }
+    :active {
+      opacity: 0.7
+    }
+`;
 
 const Amount = ({ amount, metric = ' LOKI', decimalScale = 2 }) => {
   const amountWithPrecision = amount && amount.toFixed(9).replace(/\.?0+$/, '');
@@ -41,7 +51,7 @@ const Amount = ({ amount, metric = ' LOKI', decimalScale = 2 }) => {
 
       }}
     >
-      <Button onClick={setCopied}><NumberFormat value={amount} displayType="text" thousandSeparator decimalScale={decimalScale} suffix={metric} /></Button>
+      <CopyButton onClick={setCopied}><NumberFormat value={amount} displayType="text" thousandSeparator decimalScale={decimalScale} suffix={metric} /></CopyButton>
     </Floater>
   ) : <NumberFormat value={amount} displayType="text" thousandSeparator decimalScale={decimalScale} suffix={metric} />;
 };

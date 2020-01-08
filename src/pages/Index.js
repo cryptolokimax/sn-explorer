@@ -21,7 +21,7 @@ import {
 } from '../tables/users';
 
 import {
-  Height, Amount, Logo, Status,
+  Height, Amount, Logo, Status, OperatorFeeDistribution,
 } from '../components';
 
 import StatsContainer from '../lib/statsContainer';
@@ -56,6 +56,15 @@ const GET_SERVICE_NODE_STATS = gql`
   }
 `;
 
+const GET_FEE_HISTOGRAM = gql`
+  {
+    feeHistogram {
+      class
+      frequency
+    }
+  }
+`;
+
 function Index() {
   const stats = StatsContainer.useContainer();
   const history = useHistory();
@@ -82,8 +91,10 @@ function Index() {
     variables: { offset: 0, limit: 10 },
   });
 
+  const { loading: loadingFees, error: errorFees, data: dataFees } = useQuery(GET_FEE_HISTOGRAM);
+
   if (loading) return null;
-  if (error || errorDecom || errorAwait || errorUsers) return `Error! ${error}`;
+  if (error || errorDecom || errorAwait || errorUsers || errorFees) return `Error! ${error}`;
 
   const { serviceNodeStats } = data;
 
@@ -184,23 +195,35 @@ function Index() {
           </Box>
         )}
       </Box>
-      {!loadingUsers && dataUsers && dataUsers.userStats && dataUsers.userStats.length > 0 && (
+      <Box align="start" justify="between" direction="row-responsive" pad={{ horizontal: 'medium', vertical: 'xlarge' }}>
 
-      <Box align="center" justify="start" direction="column" pad={{ horizontal: 'medium', bottom: 'medium' }}>
-        <Heading level={2}>
+        {!loadingUsers && dataUsers && dataUsers.userStats && dataUsers.userStats.length > 0 && (
+        <Box align="center" justify="start" direction="column" pad={{ horizontal: 'medium', bottom: 'medium' }}>
+          <Heading level={2}>
             Top contributors
-        </Heading>
-        <Box pad={{ horizontal: 'small', vertical: 'large' }}>
-          {usersTable(dataUsers.userStats, true)}
+          </Heading>
+          <Box pad={{ horizontal: 'small', vertical: 'large' }}>
+            {usersTable(dataUsers.userStats, true)}
+          </Box>
+          <Box alignSelf="center" style={{ display: 'inline-block' }}>
+            <Button
+              label="View all"
+              onClick={() => { history.push('/users/'); }}
+            />
+          </Box>
         </Box>
-        <Box alignSelf="center" style={{ display: 'inline-block' }}>
-          <Button
-            label="View all"
-            onClick={() => { history.push('/users/'); }}
-          />
+        )}
+        {!loadingFees && dataFees && dataFees.feeHistogram && dataFees.feeHistogram.length > 0 && (
+        <Box align="center" justify="start" direction="column" pad={{ horizontal: 'medium', bottom: 'medium' }}>
+          <Heading level={2}>
+            Operator fee distribution
+          </Heading>
+          <Box pad={{ horizontal: 'small', vertical: 'large' }}>
+            <OperatorFeeDistribution feeHistogram={dataFees.feeHistogram} />
+          </Box>
         </Box>
+        )}
       </Box>
-      )}
     </>
   );
 }
