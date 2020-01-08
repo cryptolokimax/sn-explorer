@@ -104,12 +104,13 @@ function Height({ match }) {
       <Box align="center" justify="center">
         <Box align="center" justify="center" pad="small">
           <Heading>
-            {(height === 385824) ? 'Trusty Tyr hardfork' : 'This block'}
+            {(height === 442333) ? 'Nimble Nerthus hardfork' : 'This block'}
             {' '}
             {inFuture ? 'will happen' : 'happened'}
           </Heading>
           <Heading size="large">
             {
+                 // eslint-disable-next-line no-nested-ternary
                  blockDiff === 0 ? 'just now'
                    : (inFuture
                      ? (
@@ -135,6 +136,7 @@ ago
           </Heading>
           <Heading>
             {
+                    // eslint-disable-next-line no-nested-ternary
                     blockDiff > 0 && moment(heightDate) < moment() ? (blockDiff === 1 ? 'any time now' : 'soon (current block is long)')
                       : <TimerCounter title={!exactTime && '~'} dateTime={heightDate} size="large" textStyle={{ fontSize: '1em' }} />
                 }
