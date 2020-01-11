@@ -6,12 +6,13 @@ const RewardHistories = ({ rewardHistories }) => {
   const rewardData = rewardHistories.map((r) => ({
     reward: r.reward,
     height: r.height,
+    heightNum: r.height.height + r.reward,
   }));
   return (
     <DataTable
       columns={[
         {
-          header: 'Height', property: 'height', primary: true, render: (d) => (d.height && <Height height={d.height} />),
+          header: 'Height', property: 'heightNum', primary: true, render: (d) => (d.height && <Height height={d.height} />),
         },
         { header: 'Reward', property: 'reward', render: (d) => (d.reward && <Amount amount={d.reward} decimalScale={4} />) },
       ]}

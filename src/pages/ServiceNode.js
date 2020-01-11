@@ -106,10 +106,7 @@ const GET_SERVICE_NODE = gql`
         swarm {
           swarmId
         }
-        height {
-          height
-          heightDate
-        }
+        createdAt
       }
     }
   }
@@ -290,7 +287,7 @@ function ServiceNode({ match }) {
             to current)
           </Text>
         </Box>
-        <Box align={responsiveDirection} justify={responsiveDirection} pad="small" direction="row">
+        <Box align={responsiveAlign} justify={responsiveAlign} pad="small" direction={responsiveDirection}>
           <Text size="large" weight="bold" margin={{ right: 'small' }}>
               Operator fee:
           </Text>
@@ -299,7 +296,7 @@ function ServiceNode({ match }) {
           </Text>
         </Box>
       </Box>
-      <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} publicKey={publicKey}/>
+      <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} publicKey={publicKey} />
 
       <Box align="start" justify="start" pad="small" direction={responsiveDirection}>
         <Box align="start" justify="center" pad="small">
