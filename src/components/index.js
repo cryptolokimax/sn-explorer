@@ -7,3 +7,4 @@ export { default as Logo } from './Logo';
 export { default as Header } from './Header';
 export { default as Pager } from './Pager';
 export { default as OperatorFeeDistribution } from './OperatorFeeDistribution';
+export { default as SearchBox } from './SearchBox';

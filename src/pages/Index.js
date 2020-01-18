@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
-  Box, Heading, TextInput, Text, Button,
+  Box, Heading, Text, Button,
 } from 'grommet';
 import _ from 'lodash';
 import { Link, useHistory } from 'react-router-dom';
@@ -21,7 +21,7 @@ import {
 } from '../tables/users';
 
 import {
-  Height, Amount, Logo, Status, OperatorFeeDistribution,
+  Amount, Logo, Status, OperatorFeeDistribution, SearchBox,
 } from '../components';
 
 import StatsContainer from '../lib/statsContainer';
@@ -68,7 +68,6 @@ const GET_FEE_HISTOGRAM = gql`
 function Index() {
   const stats = StatsContainer.useContainer();
   const history = useHistory();
-  const [search, setSearch] = useState('');
 
   const height = _.get(stats, 'data.generalStatistics.currentHeight');
   const stakingRequirement = _.get(stats, 'data.generalStatistics.currentHeight.stakingRequirement');
@@ -125,15 +124,7 @@ function Index() {
           <Heading margin="medium">
               Loki Service Nodes
           </Heading>
-          <TextInput
-            onChange={(e) => setSearch(e.target.value)}
-            value={search}
-            onKeyPress={(event) => { if (event.key === 'Enter') { history.push(`/sn/${search}`); } }}
-            plain={false}
-            type="text"
-            placeholder="Service Node Public Key"
-          />
-          <Button margin="small" label="Find" onClick={() => { history.push(`/sn/${search}`); }} />
+          <SearchBox />
         </Box>
       </Box>
       <Box align="center" justify="evenly" pad="small" direction="row-responsive">

@@ -12,7 +12,7 @@ import { gql } from 'apollo-boost';
 import NumberFormat from 'react-number-format';
 import Confetti from 'react-confetti';
 
-import { TimerCounter, Logo } from '../components';
+import { TimerCounter, Header } from '../components';
 
 import StatsContainer from '../lib/statsContainer';
 
@@ -79,20 +79,12 @@ function Height({ match }) {
 
   return (
     <>
-      <Box align="center" justify="between" direction="row" flex={false}>
-        <Box align="center" justify="start" pad="small" direction="row">
-          <LinkPrevious size="large" onClick={() => history.goBack()} style={{ cursor: 'pointer' }} />
-          <Logo style={{ width: 100, height: 100 }} />
-          <Box align="center" justify="stretch" pad="small" flex="grow" direction="row" height="xsmall" margin={{ left: 'medium' }}>
-            <Heading margin={{ right: 'medium' }}>
-              <NumberFormat value={height} displayType="text" thousandSeparator />
-            </Heading>
-            <Text color="brand" margin={{ right: 'medium', left: 'medium' }}>
-                HEIGHT
-            </Text>
-          </Box>
-        </Box>
-      </Box>
+
+      <Header
+        value={<Heading><NumberFormat value={height} displayType="text" thousandSeparator /></Heading>}
+        title="SERVICE NODE"
+      />
+
       <Box align="center" justify="center" pad="small" background={{ color: 'accent-4' }}>
         <Text size="large">
           {!exactTime && '~'}
