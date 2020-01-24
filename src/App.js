@@ -15,7 +15,8 @@ import StatsContainer from './lib/statsContainer';
 
 const client = new ApolloClient({
   // uri: 'http://localhost:3999',
-  uri: 'http://lokidashboard.com:3999/',
+  // uri: 'http://lokidashboard.com:3999/',
+  uri: 'https://api.lokisn.com/',
 });
 
 
