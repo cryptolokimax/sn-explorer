@@ -49,13 +49,26 @@ const OperatorFeeDistribution = ({ feeHistogram }) => {
   const minClass = _.minBy(feeHistogram, (o) => o.class).class;
   const maxClass = _.maxBy(feeHistogram, (o) => o.class).class;
   const totalElements = feeHistogram.reduce((a, c) => (a + c.frequency), 0);
-  console.log('minClass', minClass);
-  console.log('maxClass', maxClass);
-  console.log('totalElements', totalElements);
   const maxFreq = (_.maxBy(feeHistogram, (o) => o.frequency).frequency / totalElements) * 100;
 
-  const classRange = _.range(minClass, maxClass);
-  console.log('highlightedBlock', highlightedBlock);
+  const classRange = _.range(minClass, (maxClass + 1));
+
+  // We will detect outliers in a simple way: find 3 empty classes in a row after 20% and combine them
+  const outliers = classRange.reduce(
+    (a, c) => {
+      if (c > 20) {
+        const freqObj = _.find(feeHistogram, { class: c });
+        const frequency = freqObj ? freqObj.frequency : 0;
+        if (frequency === 0) return { ...a, inARowCount: a.inARowCount + 1 };
+        if (a.inARowCount < 3) return { start: (c + 1), frequency: 0, inARowCount: 0 };
+        return { ...a, frequency: a.frequency + frequency, inARowCount: a.inARowCount + 1 };
+      }
+      return a;
+    },
+    { start: 101, frequency: 0, inARowCount: 0 },
+  );
+
+  const outlierPercentage = (outliers.frequency / totalElements) * 100;
 
   return (
     <Stack
@@ -63,7 +76,8 @@ const OperatorFeeDistribution = ({ feeHistogram }) => {
     >
       <Box direction="row">
         {
-          classRange.map(
+          // do not display  classes ater outlier threshold
+          classRange.filter((a) => a <= outliers.start).map(
             (c) => {
               const freqObj = _.find(feeHistogram, { class: c });
               const frequency = freqObj ? freqObj.frequency : 0;
@@ -73,8 +87,8 @@ const OperatorFeeDistribution = ({ feeHistogram }) => {
                   onHover={(l, v) => setHighlightedBlock({ label: l, value: v })}
                   key={c}
                   maxFreq={maxFreq}
-                  label={c}
-                  value={percentage}
+                  label={c === outliers.start ? `> ${(c - 1)}` : c}
+                  value={c === outliers.start ? outlierPercentage : percentage}
                 />
               );
             },
