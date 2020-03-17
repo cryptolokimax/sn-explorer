@@ -96,7 +96,7 @@ function Height({ match }) {
       <Box align="center" justify="center">
         <Box align="center" justify="center" pad="small">
           <Heading>
-            {(height === 442333) ? 'Nimble Nerthus hardfork' : 'This block'}
+            {(height === 496969) ? 'Valiant Vidar hardfork' : 'This block'}
             {' '}
             {inFuture ? 'will happen' : 'happened'}
           </Heading>
