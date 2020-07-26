@@ -1,9 +1,7 @@
-import React from 'react';
-import {
-  Box, Heading, Text,
-} from 'grommet';
-import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import React from "react";
+import { Box, Heading, Text } from "grommet";
+import { useQuery } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
 import {
   awaitingContributionQuery,
   awaitingCongtributionTable,
@@ -17,14 +15,11 @@ import {
   deregisteredByUnlockTable,
   deregisteredByPenaltyTable,
   decomissionedTable,
-} from '../tables/statuses';
+} from "../tables/statuses";
 
-import {
-  Status, Header, Pager,
-} from '../components';
+import { Status, Header, Pager } from "../components";
 
-import useResponsive from '../lib/useResponsive';
-
+import useResponsive from "../lib/useResponsive";
 
 const queries = {
   AWAITING_CONTRIBUTION: awaitingContributionQuery,
@@ -42,7 +37,6 @@ const tables = {
   DEREGISTERED_BY_PENALTY: deregisteredByPenaltyTable,
   DECOMISSIONED: decomissionedTable,
 };
-
 
 const GET_SERVICE_NODE_STATS = gql`
   {
@@ -70,7 +64,11 @@ function StatusPage({ match }) {
     variables: { offset, limit: resultsPerPage },
   });
 
-  const { loading: loadingStats, error: errorStats, data: dataStats } = useQuery(GET_SERVICE_NODE_STATS);
+  const {
+    loading: loadingStats,
+    error: errorStats,
+    data: dataStats,
+  } = useQuery(GET_SERVICE_NODE_STATS);
 
   if (loading || loadingStats) return null;
   if (error || errorStats) return `Error! ${error} ${errorStats}`;
@@ -94,25 +92,54 @@ function StatusPage({ match }) {
 
   return (
     <>
-
       <Header
-        value={(
-          <Box align="center" justify="stretch" pad="small" flex="grow" direction="row-responsive" height="xsmall" margin={{ left: 'medium' }}>
-            <Status status={status} style={r({ default: { fontSize: '20px', paddingLeft: '5px', paddingRight: '5px' }, medium: { fontSize: '55px', paddingLeft: '15px', paddingRight: '15px' }})} />
-            {' '}
-            <Text style={r({ default: { fontSize: '30px' }, medium: { fontSize: '55px' }})}>service nodes</Text>
+        value={
+          <Box
+            align="center"
+            justify="stretch"
+            pad="small"
+            flex="grow"
+            direction="row-responsive"
+            height="xsmall"
+            margin={{ left: "medium" }}
+          >
+            <Status
+              status={status}
+              style={r({
+                default: {
+                  fontSize: "20px",
+                  paddingLeft: "5px",
+                  paddingRight: "5px",
+                },
+                medium: {
+                  fontSize: "55px",
+                  paddingLeft: "15px",
+                  paddingRight: "15px",
+                },
+              })}
+            />{" "}
+            <Text
+              style={r({
+                default: { fontSize: "30px" },
+                medium: { fontSize: "55px" },
+              })}
+            >
+              service nodes
+            </Text>
           </Box>
-        )}
+        }
         title=""
       />
 
-
       <Box align="center" justify="center" pad="small">
-        {tables[status](serviceNodes, r({default: 'true', medium: 'false'}))}
+        {tables[status](serviceNodes, r({ default: "true", medium: "false" }))}
       </Box>
 
-      <Pager page={page} numOfPages={numOfPages} url={`/status/${statParam}/`} />
-
+      <Pager
+        page={page}
+        numOfPages={numOfPages}
+        url={`/status/${statParam}/`}
+      />
     </>
   );
 }

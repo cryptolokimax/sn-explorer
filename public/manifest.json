@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Loki Service Nodes",
+  "name": "Loki Service Nodes Explorer",
   "icons": [
     {
       "src": "favicon.ico",

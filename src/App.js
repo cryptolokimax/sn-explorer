@@ -1,43 +1,42 @@
-import React from 'react';
-import { Grommet } from 'grommet';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
-import ApolloClient from 'apollo-boost';
-import { ApolloProvider } from '@apollo/react-hooks';
+import React from "react";
+import { Grommet } from "grommet";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "@apollo/react-hooks";
 
-import ServiceNode from './pages/ServiceNode';
-import Index from './pages/Index';
-import Status from './pages/Status';
-import Height from './pages/Height';
-import Users from './pages/Users';
-import User from './pages/User';
+import ServiceNode from "./pages/ServiceNode";
+import Index from "./pages/Index";
+import Status from "./pages/Status";
+import Height from "./pages/Height";
+import Users from "./pages/Users";
+import User from "./pages/User";
 
-import StatsContainer from './lib/statsContainer';
+import StatsContainer from "./lib/statsContainer";
 
 const client = new ApolloClient({
   // uri: 'http://localhost:3999',
   // uri: 'http://lokidashboard.com:3999/',
-  uri: 'https://api.lokisn.com/',
+  uri: "https://api.lokisn.com/",
 });
-
 
 const theme = {
   global: {
     colors: {
-      brand: '#228BE6',
+      brand: "#228BE6",
     },
     font: {
-      family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
-      size: '18px',
-      height: '20px',
+      family:
+        '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
+      size: "18px",
+      height: "20px",
     },
   },
 };
 
-
 function AppRouter() {
   return (
     <Router>
-      <Grommet theme={theme} full>
+      <Grommet theme={theme}>
         <nav />
         <Route path="/" exact component={Index} />
         <Route path="/height/:height" component={Height} />

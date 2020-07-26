@@ -1,17 +1,13 @@
-import React from 'react';
-import moment from 'moment';
-import {
-  Box, Heading, Text, Meter,
-} from 'grommet';
-import { StatusWarning, StatusGood } from 'grommet-icons';
-import _ from 'lodash';
-import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
+import React from "react";
+import moment from "moment";
+import { Box, Heading, Text, Meter } from "grommet";
+import { StatusWarning, StatusGood } from "grommet-icons";
+import _ from "lodash";
+import { useQuery } from "@apollo/react-hooks";
+import { gql } from "apollo-boost";
 
-import {
-  Address, TimerCounter, Height, Amount, Header,
-} from '../components';
-import useResponsive from '../lib/useResponsive';
+import { Address, TimerCounter, Height, Amount, Header } from "../components";
+import useResponsive from "../lib/useResponsive";
 
 import {
   Contributors,
@@ -23,12 +19,11 @@ import {
   PublicIPHistories,
   SwarmHistories,
   WorldMap,
-} from '../components/ServiceNode';
+} from "../components/ServiceNode";
 
+import StatsContainer from "../lib/statsContainer";
 
-import StatsContainer from '../lib/statsContainer';
-
-import constants from '../constants';
+import constants from "../constants";
 
 const GET_SERVICE_NODE = gql`
   query ServiceNode($publicKey: String!) {
@@ -36,7 +31,7 @@ const GET_SERVICE_NODE = gql`
       id
       publicKey
       active
-      earnedDowntimeBlocks 
+      earnedDowntimeBlocks
       decomissionCount
       stakingRequirement
       totalContributed
@@ -114,11 +109,11 @@ const GET_SERVICE_NODE = gql`
 
 const GET_SERVICE_NODE_FREQUENT = gql`
   query ServiceNodeFrequent($publicKey: String!) {
-      serviceNode(publicKey: $publicKey) {
-        id
-        lastUptimeProof
-        storageServerReachable
-        status
+    serviceNode(publicKey: $publicKey) {
+      id
+      lastUptimeProof
+      storageServerReachable
+      status
     }
   }
 `;
@@ -134,7 +129,11 @@ function ServiceNode({ match }) {
     pollInterval: 30000,
   });
 
-  const { loading: loadingFrequent, error: errorFrequent, data: dataFrequent } = useQuery(GET_SERVICE_NODE_FREQUENT, {
+  const {
+    loading: loadingFrequent,
+    error: errorFrequent,
+    data: dataFrequent,
+  } = useQuery(GET_SERVICE_NODE_FREQUENT, {
     variables: { publicKey },
     pollInterval: 2000,
   });
@@ -185,17 +184,24 @@ function ServiceNode({ match }) {
   } = serviceNodeFrequent;
 
   const decomDowntimeBlocks = 1440 - earnedDowntimeBlocks;
-  const downtimeDuration = moment.duration((2 * earnedDowntimeBlocks), 'minutes');
+  const downtimeDuration = moment.duration(2 * earnedDowntimeBlocks, "minutes");
 
-  const currentVersion = _.get(versionHistories, '[0].version.version');
-  const currentVersionGlobal = _.get(stats, 'data.generalStatistics.currentVersion.version');
+  const currentVersion = _.get(versionHistories, "[0].version.version");
+  const currentVersionGlobal = _.get(
+    stats,
+    "data.generalStatistics.currentVersion.version"
+  );
 
-  const currentStakingRequirement = _.get(stats, 'data.generalStatistics.currentHeight.stakingRequirement', 0);
+  const currentStakingRequirement = _.get(
+    stats,
+    "data.generalStatistics.currentHeight.stakingRequirement",
+    0
+  );
 
-  const currentSwarm = _.get(swarmHistories, '[0].swarm.swarmId');
+  const currentSwarm = _.get(swarmHistories, "[0].swarm.swarmId");
 
-  const responsiveDirection = r({ default: 'column', medium: 'row' });
-  const responsiveAlign = r({ default: 'left', medium: 'center' });
+  const responsiveDirection = r({ default: "column", medium: "row" });
+  const responsiveAlign = r({ default: "left", medium: "center" });
 
   return (
     <>
@@ -208,41 +214,56 @@ function ServiceNode({ match }) {
         justify="between"
         pad="medium"
         background={{ color: constants.statusColors[status] }}
-        height={r({ default: '150px', medium: 'xsmall' })}
+        height={r({ default: "150px", medium: "xsmall" })}
         direction={responsiveDirection}
         wrap={false}
       >
         <Box align="center" direction="row">
           {constants.statucIcons[status]}
 
-          {
-              status === 'UNLOCK_REQUESTED' ? (
-                <>
-                  <Text color="light-1" size="large" margin={{ left: 'small' }}>
-                    Unlock requested on:
-                  </Text>
-                  <Height height={requestedUnlockHeight} color="light-1" />
-                </>
-              ) : (
-                <Text color="light-1" size="large" margin={{ left: 'small' }}>
-                  {constants.statusTexts[status]}
-                </Text>
-              )
-            }
+          {status === "UNLOCK_REQUESTED" ? (
+            <>
+              <Text color="light-1" size="large" margin={{ left: "small" }}>
+                Unlock requested on:
+              </Text>
+              <Height height={requestedUnlockHeight} color="light-1" />
+            </>
+          ) : (
+            <Text color="light-1" size="large" margin={{ left: "small" }}>
+              {constants.statusTexts[status]}
+            </Text>
+          )}
         </Box>
 
-        <Box align="center" justify="center" pad="small" flex="grow" wrap={false} style={{ display: r({ default: 'none', medium: 'block' }) }} />
+        <Box
+          align="center"
+          justify="center"
+          pad="small"
+          flex="grow"
+          wrap={false}
+          style={{ display: r({ default: "none", medium: "block" }) }}
+        />
 
         <Box align="center" direction="row">
-          {storageServerReachable ? <StatusGood color="light-1" /> : <StatusWarning color="status-error" /> }
-          <Text color="light-1" size="large" margin={{ left: 'small', right: 'small' }}>
-            {storageServerReachable ? 'Storage Server Reachable' : 'Storage Server NOT Reachable' }
+          {storageServerReachable ? (
+            <StatusGood color="light-1" />
+          ) : (
+            <StatusWarning color="status-error" />
+          )}
+          <Text
+            color="light-1"
+            size="large"
+            margin={{ left: "small", right: "small" }}
+          >
+            {storageServerReachable
+              ? "Storage Server Reachable"
+              : "Storage Server NOT Reachable"}
           </Text>
         </Box>
         <TimerCounter
           title="Last uptime proof:"
           dateTime={lastUptimeProof}
-          titleSize={r({ default: 'small', medium: 'large' })}
+          titleSize={r({ default: "small", medium: "large" })}
           size="large"
           color="light-1"
           warningThreshold={90}
@@ -254,25 +275,35 @@ function ServiceNode({ match }) {
         justify="between"
         pad="small"
         direction={responsiveDirection}
-        height={r({ default: '300px', medium: '120px' })}
+        height={r({ default: "300px", medium: "120px" })}
       >
         <Box
           align={responsiveAlign}
           justify="center"
-          pad={r({ default: 'small', medium: 'medium' })}
+          pad={r({ default: "small", medium: "medium" })}
           direction={responsiveDirection}
-          style={{ paddingTop: r({ default: '20px', medium: '0px' }) }}
+          style={{ paddingTop: r({ default: "20px", medium: "0px" }) }}
         >
           <Text size="large" weight="bold">
-              Registered on:
+            Registered on:
           </Text>
           <Height height={registrationHeight} />
         </Box>
 
-        <Box align={r({ default: 'start', medium: 'end' })} justify="center" direction="column" style={{ alignSelf: 'flex-start', paddingBottom: '40px' }}>
-          <Box align={responsiveAlign} justify={responsiveAlign} pad="small" direction={responsiveDirection}>
-            <Text size="large" weight="bold" margin={{ right: 'small' }}>
-                Staking requirement:
+        <Box
+          align={r({ default: "start", medium: "end" })}
+          justify="center"
+          direction="column"
+          style={{ alignSelf: "flex-start", paddingBottom: "40px" }}
+        >
+          <Box
+            align={responsiveAlign}
+            justify={responsiveAlign}
+            pad="small"
+            direction={responsiveDirection}
+          >
+            <Text size="large" weight="bold" margin={{ right: "small" }}>
+              Staking requirement:
             </Text>
             <Text size="large">
               <Amount amount={stakingRequirement} />
@@ -280,79 +311,137 @@ function ServiceNode({ match }) {
             </Text>
           </Box>
           <Text size="small">
-            (+
-            {' '}
-            <Amount amount={(stakingRequirement - currentStakingRequirement)} />
-            {' '}
+            (+{" "}
+            <Amount amount={stakingRequirement - currentStakingRequirement} />{" "}
             to current)
           </Text>
         </Box>
-        <Box align={responsiveAlign} justify={responsiveAlign} pad="small" direction={responsiveDirection}>
-          <Text size="large" weight="bold" margin={{ right: 'small' }}>
-              Operator fee:
+        <Box
+          align={responsiveAlign}
+          justify={responsiveAlign}
+          pad="small"
+          direction={responsiveDirection}
+        >
+          <Text size="large" weight="bold" margin={{ right: "small" }}>
+            Operator fee:
           </Text>
           <Text size="large">
             <Amount amount={operatorFee} metric="%" />
           </Text>
         </Box>
       </Box>
-      <Contributors contributions={contributions} totalContributed={totalContributed} stakingRequirement={stakingRequirement} totalReserved={totalReserved} status={status} publicKey={publicKey} />
+      <Contributors
+        contributions={contributions}
+        totalContributed={totalContributed}
+        stakingRequirement={stakingRequirement}
+        totalReserved={totalReserved}
+        status={status}
+        publicKey={publicKey}
+      />
 
-      <Box align="start" justify="start" pad="small" direction={responsiveDirection}>
+      <Box
+        align="start"
+        justify="start"
+        pad="small"
+        direction={responsiveDirection}
+      >
         <Box align="start" justify="center" pad="small">
-          <Heading size="small">
-              Earned downtime blocks
-          </Heading>
-          <Box align="center" justify="start" pad="small" direction={responsiveDirection}>
-            <Meter values={[{ color: 'accent-1', label: 'Earned, blocks', value: earnedDowntimeBlocks }, { color: earnedDowntimeBlocks < 60 ? 'status-critical' : 'status-unknown', value: decomDowntimeBlocks }]} />
-            <Heading size="small" margin={{ left: 'medium' }} level="3">
-              {(earnedDowntimeBlocks > 0) ? (
+          <Heading size="small">Earned downtime blocks</Heading>
+          <Box
+            align="center"
+            justify="start"
+            pad="small"
+            direction={responsiveDirection}
+          >
+            <Meter
+              values={[
+                {
+                  color: "accent-1",
+                  label: "Earned, blocks",
+                  value: earnedDowntimeBlocks,
+                },
+                {
+                  color:
+                    earnedDowntimeBlocks < 60
+                      ? "status-critical"
+                      : "status-unknown",
+                  value: decomDowntimeBlocks,
+                },
+              ]}
+            />
+            <Heading size="small" margin={{ left: "medium" }} level="3">
+              {earnedDowntimeBlocks > 0 ? (
                 <span>
-                  {earnedDowntimeBlocks}
-                  {' '}
-                  blocks
-                  {' '}
-                  <span style={{ whiteSpace: 'nowrap' }}>
-                    (~
-                    {' '}
-                    {downtimeDuration.days() ? (24 * downtimeDuration.days() + downtimeDuration.hours()) : downtimeDuration.hours()}
-                    {' '}
-                    hrs
-                    {' '}
-                    {downtimeDuration.minutes()}
-                    {' '}
-                    min)
+                  {earnedDowntimeBlocks} blocks{" "}
+                  <span style={{ whiteSpace: "nowrap" }}>
+                    (~{" "}
+                    {downtimeDuration.days()
+                      ? 24 * downtimeDuration.days() + downtimeDuration.hours()
+                      : downtimeDuration.hours()}{" "}
+                    hrs {downtimeDuration.minutes()} min)
                   </span>
                 </span>
-              ) : <span>0 blocks</span>}
+              ) : (
+                <span>0 blocks</span>
+              )}
             </Heading>
             <Box align="center" justify="center" pad="large" flex="grow" />
           </Box>
-          { earnedDowntimeBlocks < 60 && <Text color="status-critical">60 blocks required to enable deregistration delay</Text>}
+          {earnedDowntimeBlocks < 60 && (
+            <Text color="status-critical">
+              60 blocks required to enable deregistration delay
+            </Text>
+          )}
         </Box>
-        <Box align="center" justify="center" pad="small" margin={r({ default: {}, medium: { left: 'large' } })}>
-          {downtimeBlocksHistories.length > 0 && <DowntimeBlocksChart downtimeBlocksHistories={downtimeBlocksHistories} />}
+        <Box
+          align="center"
+          justify="center"
+          pad="small"
+          margin={r({ default: {}, medium: { left: "large" } })}
+        >
+          {downtimeBlocksHistories.length > 0 && (
+            <DowntimeBlocksChart
+              downtimeBlocksHistories={downtimeBlocksHistories}
+            />
+          )}
         </Box>
       </Box>
-      <Box align={responsiveAlign} justify="start" pad="small" direction={responsiveDirection}>
+      <Box
+        align={responsiveAlign}
+        justify="start"
+        pad="small"
+        direction={responsiveDirection}
+      >
         <Box align="start" justify="center" pad="small">
           <Heading size="small">
-              Reward earned:
-            {' '}
-            <Amount amount={totalReward} />
+            Reward earned: <Amount amount={totalReward} />
           </Heading>
-          <Box align="center" justify="start" pad="small" direction={responsiveDirection}>
+          <Box
+            align="center"
+            justify="start"
+            pad="small"
+            direction={responsiveDirection}
+          >
             <RewardHistories rewardHistories={rewardHistories} />
           </Box>
         </Box>
-        { active && <NextReward stats={stats} lastRewardBlockHeight={lastRewardBlockHeight} rewardHistories={rewardHistories} />}
+        {active && (
+          <NextReward
+            stats={stats}
+            lastRewardBlockHeight={lastRewardBlockHeight}
+            rewardHistories={rewardHistories}
+          />
+        )}
       </Box>
-      <Box align="start" justify="start" pad="small" direction={responsiveDirection}>
+      <Box
+        align="start"
+        justify="start"
+        pad="small"
+        direction={responsiveDirection}
+      >
         <Box align="start" justify="center" pad="small">
           <Box align="start" justify="start" pad="small" direction="column">
-            <Heading size="small">
-                Status change history
-            </Heading>
+            <Heading size="small">Status change history</Heading>
             <StatusHistories statusHistories={statusHistories} />
           </Box>
         </Box>
@@ -360,43 +449,43 @@ function ServiceNode({ match }) {
           align="start"
           justify="center"
           pad="small"
-          margin={r({ default: {}, medium: { left: 'large' } })}
+          margin={r({ default: {}, medium: { left: "large" } })}
         >
-          <Box align="center" justify="start" pad="xsmall" direction={responsiveDirection}>
+          <Box
+            align="center"
+            justify="start"
+            pad="xsmall"
+            direction={responsiveDirection}
+          >
             <Box align="start" justify="center" pad="xsmall">
-              <Heading size="small">
-                  Version:
-                {' '}
-                {currentVersion}
-              </Heading>
+              <Heading size="small">Version: {currentVersion}</Heading>
             </Box>
-            { (currentVersion !== currentVersionGlobal)
-              ? (
-                <Box align="center" justify="center" pad="small" direction="row">
-                  <StatusWarning color="status-error" />
-                  <Heading size="small" margin={{ left: 'medium' }} level="3">
-                    requires upgrade (
-                    {currentVersionGlobal}
-)
-                  </Heading>
-                </Box>
-              )
-              : (
-                <Heading size="small" margin={{ left: 'medium' }} level="3">
-                    (latest)
+            {currentVersion !== currentVersionGlobal ? (
+              <Box align="center" justify="center" pad="small" direction="row">
+                <StatusWarning color="status-error" />
+                <Heading size="small" margin={{ left: "medium" }} level="3">
+                  requires upgrade ({currentVersionGlobal})
                 </Heading>
-              )}
+              </Box>
+            ) : (
+              <Heading size="small" margin={{ left: "medium" }} level="3">
+                (latest)
+              </Heading>
+            )}
           </Box>
           <Box align="center" justify="center" pad="medium">
             <VersionHistories versionHistories={versionHistories} />
           </Box>
         </Box>
       </Box>
-      <Box align={responsiveAlign} justify="start" pad="small" direction={responsiveDirection}>
+      <Box
+        align={responsiveAlign}
+        justify="start"
+        pad="small"
+        direction={responsiveDirection}
+      >
         <Box align="start" justify="center" pad="small">
-          <Heading size="small">
-              IP change history
-          </Heading>
+          <Heading size="small">IP change history</Heading>
           <Box align="center" justify="start" pad="small" direction="row">
             <PublicIPHistories publicIPHistories={publicIPHistories} />
           </Box>
@@ -405,21 +494,23 @@ function ServiceNode({ match }) {
           align="center"
           justify="center"
           pad="small"
-          margin={{ left: 'xlarge' }}
-          style={r({ default: { height: 200 }, medium: { width: '100%', maxWidth: '950px' } })}
+          margin={{ left: "xlarge" }}
+          style={r({
+            default: { height: 200 },
+            medium: { width: "100%", maxWidth: "950px" },
+          })}
         >
-          <WorldMap
-            publicIp={publicIp}
-          />
+          <WorldMap publicIp={publicIp} />
         </Box>
       </Box>
-      <Box align={responsiveAlign} justify="between" pad="small" direction="row">
+      <Box
+        align={responsiveAlign}
+        justify="between"
+        pad="small"
+        direction="row"
+      >
         <Box align="start" justify="center" pad="small">
-          <Heading size="small">
-              Swarm ID:
-            {' '}
-            {currentSwarm}
-          </Heading>
+          <Heading size="small">Swarm ID: {currentSwarm}</Heading>
           <Box align="center" justify="start" pad="small" direction="row">
             <SwarmHistories swarmHistories={swarmHistories} />
           </Box>
