@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Heading, Text } from "grommet";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import { gql } from "apollo-boost";
 import {
   awaitingContributionQuery,

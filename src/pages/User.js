@@ -1,28 +1,24 @@
-import React from 'react';
-import {
-  Box, DataTable,
-} from 'grommet';
-import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import {
-  Header, Address, Status, Amount,
-} from '../components';
+import React from "react";
+import { Box, DataTable } from "grommet";
+import { useQuery } from "@apollo/client";
+import { gql } from "apollo-boost";
+import { Header, Address, Status, Amount } from "../components";
 
 const GET_USER = gql`
-    query User($address: String!) {
-      user(address: $address) {
-        address
-          contributions {
-          amount
-          percent
-          isOperator
-          serviceNode {
-            publicKey
-            status
-          }
+  query User($address: String!) {
+    user(address: $address) {
+      address
+      contributions {
+        amount
+        percent
+        isOperator
+        serviceNode {
+          publicKey
+          status
         }
       }
     }
+  }
 `;
 
 function User({ match }) {
@@ -39,7 +35,6 @@ function User({ match }) {
   const { user } = data;
 
   const { contributions } = user;
-
 
   const snData = contributions.map((s) => ({
     amount: s.amount,
@@ -59,27 +54,33 @@ function User({ match }) {
         <DataTable
           columns={[
             {
-              header: 'Service Node', property: 'publicKey', align: 'start', render: (d) => (d.publicKey && <Address address={d.publicKey} />),
+              header: "Service Node",
+              property: "publicKey",
+              align: "start",
+              render: (d) => d.publicKey && <Address address={d.publicKey} />,
             },
             {
-              header: 'Status', property: 'status', search: true, render: (d) => (d.status && <Status status={d.status} />),
+              header: "Status",
+              property: "status",
+              search: true,
+              render: (d) => d.status && <Status status={d.status} />,
             },
             {
-              header: 'Contributed',
-              property: 'amount',
+              header: "Contributed",
+              property: "amount",
               sortable: true,
-              render: (d) => (d.amount && (
-              <div>
-                <Amount amount={d.amount} />
-                {' '}
-                (
-                <Amount amount={d.percent} metric="%" />
-                )
-              </div>
-              )),
+              render: (d) =>
+                d.amount && (
+                  <div>
+                    <Amount amount={d.amount} /> (
+                    <Amount amount={d.percent} metric="%" />)
+                  </div>
+                ),
             },
             {
-              header: '', property: 'isOperator', render: (d) => (d.isOperator && 'Operator'),
+              header: "",
+              property: "isOperator",
+              render: (d) => d.isOperator && "Operator",
             },
           ]}
           data={snData}

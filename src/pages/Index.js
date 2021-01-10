@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Heading, Text, Button } from "grommet";
 import _ from "lodash";
 import { Link, useHistory } from "react-router-dom";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery } from "@apollo/client";
 import { gql } from "apollo-boost";
 import styled from "styled-components";
 
@@ -155,7 +155,7 @@ function Index() {
             <Logo style={{ width: 100 }} />
           </div>
           <Heading alignSelf="center" margin="medium">
-            Loki Service Nodes
+            Oxen Service Nodes
           </Heading>
           <SearchBox />
         </Box>

@@ -1,22 +1,18 @@
-import React from 'react';
-import {
-  WorldMap, Stack, Box, Text,
-} from 'grommet';
+import React from "react";
+import { WorldMap, Stack, Box, Text } from "grommet";
 
 const WorldMapComponent = ({ publicIp }) => {
   const { latitude, longitude, country } = publicIp;
   return (
-    <Stack
-      anchor="center"
-    >
+    <Stack anchor="center">
       <WorldMap
         color="light-5"
         onSelectPlace={(lat, lon) => {}}
         places={[
           {
-            name: '',
+            name: "",
             location: [latitude, longitude],
-            color: 'accent-2',
+            color: "accent-2",
             onClick: (name) => {},
           },
         ]}
@@ -24,8 +20,8 @@ const WorldMapComponent = ({ publicIp }) => {
       />
       <Box
         pad="medium"
-        background={{ color: 'white', opacity: 'strong' }}
-        border={{ color: 'accent-2' }}
+        background={{ color: "white", opacity: "strong" }}
+        border={{ color: "accent-2" }}
         round
       >
         <Text size="large" weight="bold">

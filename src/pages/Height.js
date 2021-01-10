@@ -1,25 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import {
-  Box, Heading, Text, Layer,
-} from 'grommet';
-import { LinkPrevious } from 'grommet-icons';
-import moment from 'moment';
-import pluralize from 'pluralize';
-import _ from 'lodash';
-import { useQuery } from '@apollo/react-hooks';
-import { gql } from 'apollo-boost';
-import NumberFormat from 'react-number-format';
-import Confetti from 'react-confetti';
+import React, { useState, useEffect } from "react";
+import { useHistory } from "react-router-dom";
+import { Box, Heading, Text, Layer } from "grommet";
+import { LinkPrevious } from "grommet-icons";
+import moment from "moment";
+import pluralize from "pluralize";
+import _ from "lodash";
+import { useQuery } from "@apollo/client";
+import { gql } from "apollo-boost";
+import NumberFormat from "react-number-format";
+import Confetti from "react-confetti";
 
-import { TimerCounter, Header } from '../components';
+import { TimerCounter, Header } from "../components";
 
-import StatsContainer from '../lib/statsContainer';
+import StatsContainer from "../lib/statsContainer";
 
 const GET_HEIGHT = gql`
   query Height($height: Int!) {
     height(height: $height) {
-        heightDate
+      heightDate
     }
   }
 `;
@@ -35,9 +33,7 @@ function Height({ match }) {
 
   const isValid = Number.isInteger(height) && height > 0 && height < 5000000;
 
-  const {
-    loading, error, data, refetch,
-  } = useQuery(GET_HEIGHT, {
+  const { loading, error, data, refetch } = useQuery(GET_HEIGHT, {
     variables: { height },
   });
 
@@ -48,11 +44,19 @@ function Height({ match }) {
     if (blockDiff === -1) refetch();
   }, [blockDiff, refetch]);
 
-  const currentHeight = _.get(stats, 'data.generalStatistics.currentHeight.height', 0);
-  const currentHeightDate = _.get(stats, 'data.generalStatistics.currentHeight.heightDate', 0);
+  const currentHeight = _.get(
+    stats,
+    "data.generalStatistics.currentHeight.height",
+    0
+  );
+  const currentHeightDate = _.get(
+    stats,
+    "data.generalStatistics.currentHeight.heightDate",
+    0
+  );
 
   useEffect(() => {
-    setBlockDiff(currentHeight > 0 ? (height - currentHeight) : null);
+    setBlockDiff(currentHeight > 0 ? height - currentHeight : null);
   }, [currentHeight, height]);
 
   if (!isValid) {
@@ -64,85 +68,108 @@ function Height({ match }) {
     );
   }
 
-
-  if (currentHeight < 1 || blockDiff === null) return '';
+  if (currentHeight < 1 || blockDiff === null) return "";
 
   const inFuture = blockDiff > 0;
 
-  const diffDuration = moment.duration((2 * blockDiff), 'minutes');
+  const diffDuration = moment.duration(2 * blockDiff, "minutes");
 
-  const heightDateReceived = _.get(data, 'height.heightDate', null);
+  const heightDateReceived = _.get(data, "height.heightDate", null);
 
-  const heightDate = !inFuture && heightDateReceived ? moment(heightDateReceived) : moment(currentHeightDate).add(diffDuration);
+  const heightDate =
+    !inFuture && heightDateReceived
+      ? moment(heightDateReceived)
+      : moment(currentHeightDate).add(diffDuration);
 
   const exactTime = !inFuture && !!heightDateReceived;
 
   return (
     <>
-
       <Header
-        value={<Heading><NumberFormat value={height} displayType="text" thousandSeparator /></Heading>}
+        value={
+          <Heading>
+            <NumberFormat value={height} displayType="text" thousandSeparator />
+          </Heading>
+        }
         title="SERVICE NODE"
       />
 
-      <Box align="center" justify="center" pad="small" background={{ color: 'accent-4' }}>
+      <Box
+        align="center"
+        justify="center"
+        pad="small"
+        background={{ color: "accent-4" }}
+      >
         <Text size="large">
-          {!exactTime && '~'}
-          {' '}
-          {heightDate.format('MMM Do YYYY, h:mm a')}
+          {!exactTime && "~"} {heightDate.format("MMM Do YYYY, h:mm a")}
         </Text>
       </Box>
 
       <Box align="center" justify="center">
         <Box align="center" justify="center" pad="small">
           <Heading>
-            {(height === 496969) ? 'Valiant Vidar hardfork' : 'This block'}
-            {' '}
-            {inFuture ? 'will happen' : 'happened'}
+            {height === 641111 ? "Salty Saga hardfork" : "This block"}{" "}
+            {inFuture ? "will happen" : "happened"}
           </Heading>
           <Heading size="large">
             {
-                 // eslint-disable-next-line no-nested-ternary
-                 blockDiff === 0 ? 'just now'
-                   : (inFuture
-                     ? (
-                       <span>
-in
-                         {' '}
-                         <NumberFormat value={blockDiff} displayType="text" thousandSeparator />
-                         {' '}
-                         {pluralize('block', blockDiff)}
-                       </span>
-                     )
-                     : (
-                       <span>
-                         <NumberFormat value={(blockDiff * -1)} displayType="text" thousandSeparator />
-                         {' '}
-                         {pluralize('block', (blockDiff * -1))}
-                         {' '}
-ago
-                       </span>
-                     )
-                   )
-                }
+              // eslint-disable-next-line no-nested-ternary
+              blockDiff === 0 ? (
+                "just now"
+              ) : inFuture ? (
+                <span>
+                  in{" "}
+                  <NumberFormat
+                    value={blockDiff}
+                    displayType="text"
+                    thousandSeparator
+                  />{" "}
+                  {pluralize("block", blockDiff)}
+                </span>
+              ) : (
+                <span>
+                  <NumberFormat
+                    value={blockDiff * -1}
+                    displayType="text"
+                    thousandSeparator
+                  />{" "}
+                  {pluralize("block", blockDiff * -1)} ago
+                </span>
+              )
+            }
           </Heading>
           <Heading>
             {
-                    // eslint-disable-next-line no-nested-ternary
-                    blockDiff > 0 && moment(heightDate) < moment() ? (blockDiff === 1 ? 'any time now' : 'soon (current block is long)')
-                      : <TimerCounter title={!exactTime && '~'} dateTime={heightDate} size="large" textStyle={{ fontSize: '1em' }} />
-                }
+              // eslint-disable-next-line no-nested-ternary
+              blockDiff > 0 && moment(heightDate) < moment() ? (
+                blockDiff === 1 ? (
+                  "any time now"
+                ) : (
+                  "soon (current block is long)"
+                )
+              ) : (
+                <TimerCounter
+                  title={!exactTime && "~"}
+                  dateTime={heightDate}
+                  size="large"
+                  textStyle={{ fontSize: "1em" }}
+                />
+              )
+            }
           </Heading>
           <p>
             <Text>
-                    Current height:
-              {' '}
-              <NumberFormat value={currentHeight} displayType="text" thousandSeparator />
+              Current height:{" "}
+              <NumberFormat
+                value={currentHeight}
+                displayType="text"
+                thousandSeparator
+              />
             </Text>
           </p>
         </Box>
       </Box>
-      {blockDiff === 0 && <Confetti /> }
+      {blockDiff === 0 && <Confetti />}
     </>
   );
 }

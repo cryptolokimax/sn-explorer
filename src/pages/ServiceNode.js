@@ -1,10 +1,11 @@
 import React from "react";
 import moment from "moment";
-import { Box, Heading, Text, Meter } from "grommet";
-import { StatusWarning, StatusGood } from "grommet-icons";
+import { Box, Heading, Text, Meter, Button } from "grommet";
+import { StatusWarning, StatusGood, Download } from "grommet-icons";
 import _ from "lodash";
-import { useQuery } from "@apollo/react-hooks";
+import { useQuery, useLazyQuery } from "@apollo/client";
 import { gql } from "apollo-boost";
+import downloadCsv from "download-csv";
 
 import { Address, TimerCounter, Height, Amount, Header } from "../components";
 import useResponsive from "../lib/useResponsive";
@@ -79,6 +80,8 @@ const GET_SERVICE_NODE = gql`
         height {
           height
           heightDate
+          priceBTC
+          priceUSD
         }
       }
       statusHistories {
@@ -118,6 +121,23 @@ const GET_SERVICE_NODE_FREQUENT = gql`
   }
 `;
 
+const GET_FULL_REWARDS_HISTORY = gql`
+  query ServiceNode($publicKey: String!, $noLimit: Boolean) {
+    serviceNode(publicKey: $publicKey, noLimit: $noLimit) {
+      rewardHistories {
+        reward
+        height {
+          height
+          heightDate
+          priceBTC
+          priceUSD
+          priceEUR
+        }
+      }
+    }
+  }
+`;
+
 function ServiceNode({ match }) {
   const r = useResponsive();
 
@@ -136,6 +156,31 @@ function ServiceNode({ match }) {
   } = useQuery(GET_SERVICE_NODE_FREQUENT, {
     variables: { publicKey },
     pollInterval: 2000,
+  });
+
+  // Generate and Download CSV on request
+  const [generateCVS] = useLazyQuery(GET_FULL_REWARDS_HISTORY, {
+    variables: { publicKey, noLimit: true },
+    onCompleted: (data) => {
+      if (data.serviceNode && data.serviceNode.rewardHistories) {
+        const csvdata = data.serviceNode.rewardHistories.map((h) => ({
+          date: h.height.heightDate.substring(0, 10),
+          reward: h.reward,
+          btc: h.reward * h.height.priceBTC,
+          usd: h.reward * h.height.priceUSD,
+          eur: h.reward * h.height.priceEUR,
+        }));
+        const columns = {
+          date: "Date",
+          reward: "SN reward (OXEN)",
+          btc: "SN reward (BTC)",
+          usd: "SN reward (USD)",
+          eur: "SN reward (EUR)",
+        };
+
+        downloadCsv(csvdata, columns, `rewards_${publicKey}.csv`);
+      }
+    },
   });
 
   const stats = StatsContainer.useContainer();
@@ -415,7 +460,14 @@ function ServiceNode({ match }) {
         <Box align="start" justify="center" pad="small">
           <Heading size="small">
             Reward earned: <Amount amount={totalReward} />
+            <Button
+              onClick={() => {
+                generateCVS();
+              }}
+              icon={<Download />}
+            />
           </Heading>
+
           <Box
             align="center"
             justify="start"

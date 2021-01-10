@@ -2,7 +2,7 @@ import React from "react";
 import { Grommet } from "grommet";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "@apollo/react-hooks";
+import { ApolloProvider } from "@apollo/client";
 
 import ServiceNode from "./pages/ServiceNode";
 import Index from "./pages/Index";

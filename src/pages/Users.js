@@ -1,17 +1,12 @@
-import React from 'react';
-import {
-  Heading,
-  Box,
-} from 'grommet';
+import React from "react";
+import { Heading, Box } from "grommet";
 
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery } from "@apollo/client";
 
 // import useResponsive from '../lib/useResponsive';
-import {
-  Header, Pager,
-} from '../components';
+import { Header, Pager } from "../components";
 
-import { query, table } from '../tables/users';
+import { query, table } from "../tables/users";
 
 const resultsPerPage = 20;
 
@@ -28,18 +23,14 @@ function Users({ match }) {
     variables: { offset, limit: resultsPerPage },
   });
 
-
   if (loading) return null;
   if (error) return `Error! ${error}`;
 
   const { userStats } = data;
 
-
   return (
     <>
-      <Header
-        value={<Heading>Top contributors</Heading>}
-      />
+      <Header value={<Heading>Top contributors</Heading>} />
       <Box align="center" justify="center" pad="small">
         {table(userStats)}
       </Box>

@@ -1,5 +1,5 @@
  
-## Loki Service Node Front end
+## Oxen Service Node Front end
 
 ```yarn```
 

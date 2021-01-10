@@ -1,9 +1,9 @@
-import React from 'react';
+import React from "react";
 
 const SvgComponent = (props) => (
   <svg
     style={{
-      isolation: 'isolate',
+      isolation: "isolate",
     }}
     viewBox="0 0 640 640"
     {...props}
@@ -15,7 +15,7 @@ const SvgComponent = (props) => (
     </defs>
     <g
       style={{
-        isolation: 'isolate',
+        isolation: "isolate",
       }}
       clipPath="url(#prefix__a)"
     >
