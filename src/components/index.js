@@ -10,3 +10,5 @@ export { default as OperatorFeeDistribution } from "./OperatorFeeDistribution";
 export { default as SearchBox } from "./SearchBox";
 export { default as Navbar } from "./Navbar";
 export { default as UnlockRequestedNodes } from "./UnlockRequestedNodes";
+export { default as LockedStats } from "./LockedStats";
+export { default as Loader } from "./Loader";

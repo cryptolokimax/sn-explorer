@@ -8,8 +8,8 @@
     "download-csv": "^1.1.1",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.10.4",
-    "grommet": "^2.14.0",
-    "grommet-icons": "^4.4.0",
+    "grommet": "^2.17.1",
+    "grommet-icons": "^4.5.0",
     "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "netlify-cli": "^2.58.0",
@@ -23,6 +23,7 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.1.2",
     "react-use-clipboard": "1.0.0",
+    "recharts": "^2.0.9",
     "styled-components": "^4.4.1",
     "unstated-next": "^1.1.0"
   },

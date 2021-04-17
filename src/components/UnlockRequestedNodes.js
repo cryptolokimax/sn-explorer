@@ -26,7 +26,7 @@ const UnlockRequestedNodes = ({ unlockRequestByDate }) => {
 
   if (isDesktop)
     columns.push({
-      property: "number",
+      property: "numberGraph",
       header: "",
       render: (d) => (
         <Box pad={{ vertical: "small" }}>

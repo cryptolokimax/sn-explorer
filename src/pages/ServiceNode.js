@@ -7,7 +7,7 @@ import { useQuery, useLazyQuery } from "@apollo/client";
 import { gql } from "apollo-boost";
 import downloadCsv from "download-csv";
 
-import { Address, TimerCounter, Height, Amount, Header } from "../components";
+import { Address, TimerCounter, Height, Amount, Header, Loader } from "../components";
 import useResponsive from "../lib/useResponsive";
 
 import {
@@ -185,7 +185,7 @@ function ServiceNode({ match }) {
 
   const stats = StatsContainer.useContainer();
 
-  if (loading || loadingFrequent) return null;
+  if (loading) return <Loader />;
   if (error || errorFrequent) return `Error! ${error} ${errorFrequent}`;
 
   const { serviceNode } = data;
@@ -355,11 +355,13 @@ function ServiceNode({ match }) {
               <br />
             </Text>
           </Box>
-          <Text size="small">
-            (+{" "}
-            <Amount amount={stakingRequirement - currentStakingRequirement} />{" "}
+          {(stakingRequirement - currentStakingRequirement) > 0 && (
+            <Text size="small">
+              (+{" "}
+              <Amount amount={stakingRequirement - currentStakingRequirement} />{" "}
             to current)
-          </Text>
+            </Text>
+          )}
         </Box>
         <Box
           align={responsiveAlign}

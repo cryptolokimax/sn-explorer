@@ -57,12 +57,12 @@ const Contributors = ({
 
   const minStakingAmount =
     totalContributed < stakingRequirement &&
-    contributions &&
-    contributions.length
+      contributions &&
+      contributions.length
       ? calcMinimumContribution(
-          stakingRequirement - totalContributed,
-          contributions.length
-        )
+        stakingRequirement - totalContributed,
+        contributions.length
+      )
       : 0;
 
   const columns = r({
@@ -193,7 +193,7 @@ const Contributors = ({
       {!fullyStaked && (
         <Text>
           <a
-            href="https://docs.loki.network/ServiceNodes/GUIStakingGuide/"
+            href="https://docs.oxen.io/using-the-oxen-blockchain/oxen-service-node-guides/staking-to-shared-service-node"
             rel="noopener noreferrer"
             target="_blank"
           >

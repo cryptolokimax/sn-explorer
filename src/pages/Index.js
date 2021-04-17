@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Heading, Text, Button } from "grommet";
+import { Box, Heading, Text, Button, Spinner } from "grommet";
 import _ from "lodash";
 import { Link, useHistory } from "react-router-dom";
 import { useQuery } from "@apollo/client";
@@ -23,6 +23,8 @@ import {
   SearchBox,
   Navbar,
   UnlockRequestedNodes,
+  LockedStats,
+  Loader
 } from "../components";
 
 import StatsContainer from "../lib/statsContainer";
@@ -64,6 +66,17 @@ const GET_UNLOCK_REQUEST_BY_DAYTE = gql`
     }
   }
 `;
+
+const GET_LOCKED_STATS = gql`
+  {
+    lockedStats {
+      lockedCircSupply
+      lockedUSD
+      heightDate
+    }
+  }
+`;
+
 
 function Index() {
   const stats = StatsContainer.useContainer();
@@ -118,16 +131,27 @@ function Index() {
     data: dataUnlocks,
   } = useQuery(GET_UNLOCK_REQUEST_BY_DAYTE);
 
-  console.log("dataUnlocks", dataUnlocks);
 
-  if (loading) return null;
+  const {
+    loading: loadingLockedStats,
+    error: errorLockedStats,
+    data: dataLockedStats,
+  } = useQuery(GET_LOCKED_STATS);
+
+
+  if (loading) return (
+    <Loader />
+  )
+
+
   if (
     error ||
     errorDecom ||
     errorAwait ||
     errorUsers ||
     errorFees ||
-    errorUnlocks
+    errorUnlocks ||
+    errorLockedStats
   ) {
     return `Error! ${error}`;
   }
@@ -292,7 +316,7 @@ function Index() {
           dataUsers.userStats &&
           dataUsers.userStats.length > 0 && (
             <Box
-              align="left"
+              align="start"
               justify="start"
               direction="column"
               pad={{ horizontal: "medium", bottom: "medium" }}
@@ -320,7 +344,7 @@ function Index() {
           dataUnlocks.unlockRequestByDate &&
           dataUnlocks.unlockRequestByDate.length > 0 && (
             <Box
-              align="left"
+              align="start"
               justify="start"
               direction="column"
               pad={{ horizontal: "medium", bottom: "medium" }}
@@ -337,8 +361,8 @@ function Index() {
       </Box>
       <Box
         align="start"
-        justify="between"
-        direction="row-responsive"
+        justify="start"
+        direction={r({ small: "column", large: "row-responsive" })}
         pad={{
           horizontal: "medium",
           vertical: r({ default: "none", medium: "small" }),
@@ -350,7 +374,7 @@ function Index() {
           dataFees.feeHistogram &&
           dataFees.feeHistogram.length > 0 && (
             <Box
-              align="left"
+              align="start"
               justify="start"
               direction="column"
               pad={{ horizontal: "medium", bottom: "medium" }}
@@ -361,6 +385,26 @@ function Index() {
               </Box>
             </Box>
           )}
+
+        {isDesktop &&
+          !loadingLockedStats &&
+          dataLockedStats &&
+          dataLockedStats.lockedStats &&
+          dataLockedStats.lockedStats.length > 0 && (
+            <Box
+              align="start"
+              justify="start"
+              direction="column"
+              pad={{ horizontal: "medium", bottom: "medium" }}
+            >
+              <Heading level={2}>Locked Circular Supply</Heading>
+              <Box pad={{ horizontal: "small", vertical: "large" }}>
+                <LockedStats lockedStats={dataLockedStats.lockedStats} />
+              </Box>
+            </Box>
+          )}
+
+
       </Box>
     </>
   );
