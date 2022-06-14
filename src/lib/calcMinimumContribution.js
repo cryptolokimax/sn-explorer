@@ -1,5 +1,10 @@
-const calcMinimumContribution = (availableForStake, contributorsNum) => {
-  const minStakingAmount = availableForStake / (4 - contributorsNum);
+const calcMinimumContribution = (
+  availableForStake,
+  contributorsNum,
+  maxNumOfContributions
+) => {
+  const minStakingAmount =
+    availableForStake / (maxNumOfContributions - contributorsNum);
   return minStakingAmount;
 };
 

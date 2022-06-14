@@ -14,6 +14,7 @@ const Contributors = ({
   totalReserved,
   status = "",
   publicKey,
+  maxNumOfContributions,
 }) => {
   const [highlightPublicKey, setHighlightPublicKey] = useState("");
   const [isCopied, setCopied] = useClipboard(publicKey);
@@ -57,12 +58,13 @@ const Contributors = ({
 
   const minStakingAmount =
     totalContributed < stakingRequirement &&
-      contributions &&
-      contributions.length
+    contributions &&
+    contributions.length
       ? calcMinimumContribution(
-        stakingRequirement - totalContributed,
-        contributions.length
-      )
+          stakingRequirement - totalContributed,
+          contributions.length,
+          maxNumOfContributions
+        )
       : 0;
 
   const columns = r({
@@ -192,12 +194,22 @@ const Contributors = ({
       </Box>
       {!fullyStaked && (
         <Text>
+          <br />
+          Follow{" "}
           <a
             href="https://docs.oxen.io/using-the-oxen-blockchain/oxen-service-node-guides/staking-to-shared-service-node"
             rel="noopener noreferrer"
             target="_blank"
           >
-            Follow GUI staking guide
+            GUI staking guide
+          </a>
+          {" or "}
+          <a
+            href="https://docs.oxen.io/using-the-oxen-blockchain/oxen-service-node-guides/mobile-wallet-staking-guide"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            mobile staking guide
           </a>{" "}
           to contribute <Amount amount={minStakingAmount} /> or more to this
           Service Node.{" "}

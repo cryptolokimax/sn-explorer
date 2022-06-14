@@ -4,7 +4,7 @@ import moment from "moment";
 import pluralize from "pluralize";
 import _ from "lodash";
 
-const NextReward = ({ stats, lastRewardBlockHeight, rewardHistories }) => {
+const NextReward = ({ stats, lastRewardBlockHeight, unlockingNodes }) => {
   const currentHeight = _.get(
     stats,
     "data.generalStatistics.currentHeight.height",
@@ -18,7 +18,35 @@ const NextReward = ({ stats, lastRewardBlockHeight, rewardHistories }) => {
   const lastRewardHeight = lastRewardBlockHeight.height;
 
   const blocksToGo = lastRewardHeight - currentHeight + activeNodesNum;
-  const nextRewardDuration = moment.duration(2 * blocksToGo, "minutes");
+  const nextRewardDurationBeforeUnlocked = moment.duration(
+    2 * blocksToGo,
+    "minutes"
+  );
+  const nextRewardDurationBeforeUnlockedDate = moment().add(
+    nextRewardDurationBeforeUnlocked
+  );
+
+  console.log("unlockingNodes", unlockingNodes);
+  const blocksToUnlock =
+    unlockingNodes &&
+    unlockingNodes.serviceNodes &&
+    unlockingNodes.serviceNodes.length > 0
+      ? unlockingNodes.serviceNodes.reduce((prev, current) => {
+          console.log("current", current);
+          return moment(current.requestedUnlockHeight.heightDate).isBefore(
+            nextRewardDurationBeforeUnlockedDate
+          )
+            ? prev + 1
+            : prev;
+        }, 0)
+      : 0;
+
+  console.log("blocksToUnlock", blocksToUnlock);
+
+  const nextRewardDuration = moment.duration(
+    2 * (blocksToGo - blocksToUnlock),
+    "minutes"
+  );
 
   return (
     blocksToGo > 0 && (

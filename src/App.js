@@ -14,8 +14,8 @@ import User from "./pages/User";
 import StatsContainer from "./lib/statsContainer";
 
 const client = new ApolloClient({
-  uri: "https://api.lokisn.com/",
-  // uri: "http://localhost:3999/",
+  // uri: "https://api.oxensn.com/",
+  uri: "http://localhost:3999/",
 });
 
 const theme = {

@@ -7,7 +7,14 @@ import { useQuery, useLazyQuery } from "@apollo/client";
 import { gql } from "apollo-boost";
 import downloadCsv from "download-csv";
 
-import { Address, TimerCounter, Height, Amount, Header, Loader } from "../components";
+import {
+  Address,
+  TimerCounter,
+  Height,
+  Amount,
+  Header,
+  Loader,
+} from "../components";
 import useResponsive from "../lib/useResponsive";
 
 import {
@@ -38,6 +45,7 @@ const GET_SERVICE_NODE = gql`
       totalContributed
       totalReserved
       operatorFee
+      maxNumOfContributions
       requestedUnlockHeight {
         height
         heightDate
@@ -116,6 +124,7 @@ const GET_SERVICE_NODE_FREQUENT = gql`
       id
       lastUptimeProof
       storageServerReachable
+      lokinetReachable
       status
     }
   }
@@ -134,6 +143,30 @@ const GET_FULL_REWARDS_HISTORY = gql`
           priceEUR
         }
       }
+    }
+  }
+`;
+
+const GET_UNLOCKING_NODES = gql`
+  query ServiceNodeByStatus($offset: Int, $limit: Int) {
+    serviceNodes(
+      status: UNLOCK_REQUESTED
+      offset: $offset
+      limit: $limit
+      orderBy: requestedUnlockHeightHeight
+      direction: ASC
+    ) {
+      requestedUnlockHeight {
+        heightDate
+      }
+    }
+  }
+`;
+
+const GET_NEXT_TEST_HEIGHT = gql`
+  query NextTestHeight($publicKey: String) {
+    nextTestHeight(publicKey: $publicKey) {
+      height
     }
   }
 `;
@@ -183,7 +216,56 @@ function ServiceNode({ match }) {
     },
   });
 
+  const {
+    loading: loadingUnlocking,
+    error: errorUnlocking,
+    data: dataUnlocking,
+  } = useQuery(GET_UNLOCKING_NODES, {
+    variables: { offset: 0, limit: 500 },
+    pollInterval: 20 * 60 * 1000,
+  });
+
+  const {
+    loading: loadingNextTestHeight,
+    error: errorNextTestHeightg,
+    data: dataNextTestHeight,
+  } = useQuery(GET_NEXT_TEST_HEIGHT, {
+    variables: { publicKey },
+    pollInterval: 2 * 60 * 1000,
+  });
+
   const stats = StatsContainer.useContainer();
+
+  let nextTestDateTime = null;
+  let extraNextTestDateTest = " in > 24 minutes";
+  if (!loadingNextTestHeight) {
+    const currentHeightDate = _.get(
+      stats,
+      "data.generalStatistics.currentHeight.heightDate",
+      0
+    );
+
+    const currentHeight = _.get(
+      stats,
+      "data.generalStatistics.currentHeight.height",
+      0
+    );
+
+    if (currentHeight > 0) {
+      const heightDiff =
+        dataNextTestHeight.nextTestHeight.height - parseInt(currentHeight);
+      if (heightDiff > 0) {
+        nextTestDateTime = moment(currentHeightDate).add(
+          heightDiff * 2,
+          "minutes"
+        );
+        extraNextTestDateTest = "";
+      }
+      if (heightDiff === 0) extraNextTestDateTest = " NOW";
+    }
+  }
+
+  console.log("nextTestDateTime", nextTestDateTime);
 
   if (loading) return <Loader />;
   if (error || errorFrequent) return `Error! ${error} ${errorFrequent}`;
@@ -209,6 +291,7 @@ function ServiceNode({ match }) {
     totalContributed,
     totalReserved,
     operatorFee,
+    maxNumOfContributions,
     contributions,
     earnedDowntimeBlocks,
     lastRewardBlockHeight,
@@ -222,11 +305,8 @@ function ServiceNode({ match }) {
     publicIp,
   } = serviceNode;
 
-  const {
-    status,
-    lastUptimeProof,
-    storageServerReachable,
-  } = serviceNodeFrequent;
+  const { status, lastUptimeProof, storageServerReachable, lokinetReachable } =
+    serviceNodeFrequent;
 
   const decomDowntimeBlocks = 1440 - earnedDowntimeBlocks;
   const downtimeDuration = moment.duration(2 * earnedDowntimeBlocks, "minutes");
@@ -289,22 +369,6 @@ function ServiceNode({ match }) {
           style={{ display: r({ default: "none", medium: "block" }) }}
         />
 
-        <Box align="center" direction="row">
-          {storageServerReachable ? (
-            <StatusGood color="light-1" />
-          ) : (
-            <StatusWarning color="status-error" />
-          )}
-          <Text
-            color="light-1"
-            size="large"
-            margin={{ left: "small", right: "small" }}
-          >
-            {storageServerReachable
-              ? "Storage Server Reachable"
-              : "Storage Server NOT Reachable"}
-          </Text>
-        </Box>
         <TimerCounter
           title="Last uptime proof:"
           dateTime={lastUptimeProof}
@@ -312,6 +376,14 @@ function ServiceNode({ match }) {
           size="large"
           color="light-1"
           warningThreshold={90}
+          textStyle={{ minWidth: 230 }}
+        />
+        <TimerCounter
+          title={`Next test:${extraNextTestDateTest}`}
+          dateTime={nextTestDateTime}
+          titleSize={r({ default: "small", medium: "large" })}
+          size="large"
+          color="light-1"
           textStyle={{ minWidth: 230 }}
         />
       </Box>
@@ -355,28 +427,58 @@ function ServiceNode({ match }) {
               <br />
             </Text>
           </Box>
-          {(stakingRequirement - currentStakingRequirement) > 0 && (
+          {stakingRequirement - currentStakingRequirement > 0 && (
             <Text size="small">
               (+{" "}
               <Amount amount={stakingRequirement - currentStakingRequirement} />{" "}
-            to current)
+              to current)
             </Text>
           )}
         </Box>
+
         <Box
           align={responsiveAlign}
           justify={responsiveAlign}
           pad="small"
           direction={responsiveDirection}
         >
-          <Text size="large" weight="bold" margin={{ right: "small" }}>
-            Operator fee:
-          </Text>
-          <Text size="large">
-            <Amount amount={operatorFee} metric="%" />
-          </Text>
+          <Box direction="column">
+            <Box align="center" direction="row">
+              <Text size="large" weight="bold" margin={{ right: "small" }}>
+                Operator fee:
+              </Text>
+              <Text size="large">
+                <Amount amount={operatorFee} metric="%" />
+              </Text>
+            </Box>
+            <Box align="center" direction="row" margin={{ top: "medium" }}>
+              {storageServerReachable ? (
+                <StatusGood />
+              ) : (
+                <StatusWarning color="status-error" />
+              )}
+              <Text size="large" margin={{ left: "small", right: "small" }}>
+                {storageServerReachable
+                  ? "Storage Server Reachable"
+                  : "Storage Server NOT Reachable"}
+              </Text>
+            </Box>
+            <Box align="center" direction="row" margin={{ top: "medium" }}>
+              {lokinetReachable ? (
+                <StatusGood />
+              ) : (
+                <StatusWarning color="status-error" />
+              )}
+              <Text size="large" margin={{ left: "small", right: "small" }}>
+                {lokinetReachable
+                  ? "Lokinet Reachable"
+                  : "Lokinet NOT Reachable"}
+              </Text>
+            </Box>
+          </Box>
         </Box>
       </Box>
+
       <Contributors
         contributions={contributions}
         totalContributed={totalContributed}
@@ -384,6 +486,7 @@ function ServiceNode({ match }) {
         totalReserved={totalReserved}
         status={status}
         publicKey={publicKey}
+        maxNumOfContributions={maxNumOfContributions}
       />
 
       <Box
@@ -484,6 +587,7 @@ function ServiceNode({ match }) {
             stats={stats}
             lastRewardBlockHeight={lastRewardBlockHeight}
             rewardHistories={rewardHistories}
+            unlockingNodes={dataUnlocking}
           />
         )}
       </Box>

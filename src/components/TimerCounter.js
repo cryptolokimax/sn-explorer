@@ -54,29 +54,29 @@ const TimerCounter = ({
     warningThreshold > 0 && currentDateTime.asMinutes() > warningThreshold; // Display if more than warningThreshold minutes passed
   const inFuture = currentDateTime.asMinutes() < 0;
   return (
-    currentDateTimeString && (
-      <Box
-        direction={r({ default: "column", medium: "row" })}
-        margin={{ right: "small", left: "small" }}
-      >
-        {showWarning && (
-          <Box margin={{ right: "small", left: "small" }}>
-            <Alert color="accent-4" />
-          </Box>
-        )}
-        {title && (
-          <Text size={titleSize} color={color}>
-            {title}
-            &nbsp;
-          </Text>
-        )}
+    <Box
+      direction={r({ default: "column", medium: "row" })}
+      margin={{ right: "small", left: "small" }}
+    >
+      {currentDateTimeString && showWarning && (
+        <Box margin={{ right: "small", left: "small" }}>
+          <Alert color="accent-4" />
+        </Box>
+      )}
+      {title && (
+        <Text size={titleSize} color={color}>
+          {title}
+          &nbsp;
+        </Text>
+      )}
+      {currentDateTimeString && (
         <Text size={size} color={color} style={textStyle}>
           {inFuture && "in "}
           {currentDateTimeString}
           {!inFuture && " ago"}
         </Text>
-      </Box>
-    )
+      )}
+    </Box>
   );
 };
 

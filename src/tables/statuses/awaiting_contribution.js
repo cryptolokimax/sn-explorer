@@ -22,6 +22,7 @@ const query = gql`
       stakingRequirement
       availableForStake
       contributorsNum
+      maxNumOfContributions
     }
   }
 `;
@@ -37,10 +38,12 @@ const table = (serviceNodes, short = "false") => {
       ((s.stakingRequirement - s.availableForStake) / s.stakingRequirement) *
       100,
     contributorsNum: s.contributorsNum,
-    availableContributorsNum: 4 - s.contributorsNum,
+    maxNumOfContributions: s.maxNumOfContributions,
+    availableContributorsNum: s.maxNumOfContributions - s.contributorsNum,
     minStakingAmount: calcMinimumContribution(
       s.availableForStake,
-      s.contributorsNum
+      s.contributorsNum,
+      s.maxNumOfContributions
     ),
   }));
 
@@ -87,7 +90,7 @@ const table = (serviceNodes, short = "false") => {
           <Box pad={{ vertical: "xsmall" }}>
             <Amount amount={d.availableForStake} />
             <Text size="xsmall">
-              {d.availableContributorsNum} of 4{" "}
+              {d.availableContributorsNum} of {d.maxNumOfContributions}{" "}
               {pluralize("slot", d.availableContributorsNum)} available
             </Text>
           </Box>
@@ -110,7 +113,7 @@ const table = (serviceNodes, short = "false") => {
           <Box pad={{ vertical: "xsmall" }}>
             <Amount amount={d.availableForStake} />
             <Text size="xsmall">
-              {d.availableContributorsNum} of 4{" "}
+              {d.availableContributorsNum} of {d.maxNumOfContributions}{" "}
               {pluralize("slot", d.availableContributorsNum)} available
             </Text>
             <Text size="xsmall">
