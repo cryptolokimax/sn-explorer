@@ -6,6 +6,7 @@ import { Height, Status } from "..";
 const StatusHistories = ({ statusHistories }) => {
   const statusData = statusHistories.map((r) => ({
     status: r.status,
+    extra: r.extra,
     height: r.height,
     heightNum: `${r.height.height}-${r.status}`,
   }));
@@ -32,7 +33,8 @@ const StatusHistories = ({ statusHistories }) => {
         {
           header: "Status",
           property: "status",
-          render: (d) => d.status && <Status status={d.status} />,
+          render: (d) =>
+            d.status && <Status status={d.status} extra={d.extra} />,
         },
       ]}
       data={statusDataSorted}

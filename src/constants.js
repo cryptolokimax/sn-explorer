@@ -1,28 +1,41 @@
-import React from 'react';
+import React from "react";
 import {
-  Clock, Alert, Currency, StatusGood, Add, Hide, Clear, FormSubtract,
-} from 'grommet-icons';
+  Clock,
+  Alert,
+  Currency,
+  StatusGood,
+  Add,
+  Hide,
+  Clear,
+  FormSubtract,
+  Achievement,
+  Action,
+} from "grommet-icons";
 
 const constants = {
   statusColors: {
-    REGISTERED: 'accent-1',
-    AWAITING_CONTRIBUTION: 'accent-2',
-    ACTIVE: 'status-ok',
-    UNLOCK_REQUESTED: 'status-warning',
-    DEREGISTERED_BY_UNLOCK: 'status-disabled',
-    DECOMISSIONED: 'status-error',
-    DEREGISTERED_BY_PENALTY: 'dark-2',
-    UNKNOWN: 'status-unknown',
+    REGISTERED: "accent-1",
+    AWAITING_CONTRIBUTION: "accent-2",
+    ACTIVE: "status-ok",
+    UNLOCK_REQUESTED: "status-warning",
+    DEREGISTERED_BY_UNLOCK: "status-disabled",
+    DECOMISSIONED: "status-error",
+    DEREGISTERED_BY_PENALTY: "dark-2",
+    UNKNOWN: "status-unknown",
+    RECOMISSIONED: "neutral-1",
+    IP_CHANGE_PENALTY: "neutral-3",
   },
   statusTexts: {
-    REGISTERED: 'Registered',
-    AWAITING_CONTRIBUTION: 'Awaiting contribution',
-    ACTIVE: 'Active',
-    UNLOCK_REQUESTED: 'Unlock requested',
-    DEREGISTERED_BY_UNLOCK: 'Deregistered by unlock',
-    DECOMISSIONED: 'Decomissioned',
-    DEREGISTERED_BY_PENALTY: 'Deregistered by penalty',
-    UNKNOWN: 'Unknown',
+    REGISTERED: "Registered",
+    AWAITING_CONTRIBUTION: "Awaiting contribution",
+    ACTIVE: "Active",
+    UNLOCK_REQUESTED: "Unlock requested",
+    DEREGISTERED_BY_UNLOCK: "Deregistered by unlock",
+    DECOMISSIONED: "Decommissioned",
+    DEREGISTERED_BY_PENALTY: "Deregistered by penalty",
+    UNKNOWN: "Unknown",
+    RECOMISSIONED: "Recommissioned",
+    IP_CHANGE_PENALTY: "IP change penalty",
   },
   statucIcons: {
     REGISTERED: <Add color="light-1" />,
@@ -33,6 +46,8 @@ const constants = {
     DECOMISSIONED: <Alert color="light-1" />,
     DEREGISTERED_BY_PENALTY: <Clear color="light-1" />,
     UNKNOWN: <FormSubtract color="light-1" />,
+    RECOMISSIONED: <Achievement color="light-1" />,
+    IP_CHANGE_PENALTY: <Action color="light-1" />,
   },
   statusIconsColored: {
     REGISTERED: <Add color="accent-1" />,
@@ -43,6 +58,8 @@ const constants = {
     DECOMISSIONED: <Alert color="status-error" />,
     DEREGISTERED_BY_PENALTY: <Clear color="dark-2" />,
     UNKNOWN: <FormSubtract color="status-unknown" />,
+    RECOMISSIONED: <Achievement color="neutral-1" />,
+    IP_CHANGE_PENALTY: <Action color="neutral-3" />,
   },
 };
 

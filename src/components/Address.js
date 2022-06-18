@@ -26,22 +26,30 @@ const AddressLink = styled(Link)`
   }
 `;
 
-const Address = ({ address, size = "medium", type = "node" }) => {
+const Address = ({
+  address,
+  size = "medium",
+  type = "node",
+  inline = false,
+}) => {
   const [isCopied, setCopied] = useClipboard(address);
 
   const r = useResponsive();
 
   const textSizes = {
+    xsmall: "12px",
     medium: "20px",
     large: r({ default: "30px", small: "40px" }),
     default: "36px",
   };
   const margin = {
+    xsmall: "x-small",
     medium: "x-small",
     large: "small",
     default: "x-small",
   };
   const weights = {
+    xsmall: "normal",
     medium: "normal",
     large: "bold",
     default: "bold",
@@ -56,7 +64,11 @@ const Address = ({ address, size = "medium", type = "node" }) => {
 
   return (
     <div
-      style={{ display: "flex", flexDirection: "row", alignItems: "center" }}
+      style={{
+        display: inline ? "inline-flex" : "flex",
+        flexDirection: "row",
+        alignItems: "center",
+      }}
     >
       <Text
         margin={{ right: margin[size] || margin.default }}

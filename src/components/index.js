@@ -12,3 +12,4 @@ export { default as Navbar } from "./Navbar";
 export { default as UnlockRequestedNodes } from "./UnlockRequestedNodes";
 export { default as LockedStats } from "./LockedStats";
 export { default as Loader } from "./Loader";
+export { default as DecomReason } from "./DecomReason";

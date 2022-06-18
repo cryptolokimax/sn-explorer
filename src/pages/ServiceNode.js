@@ -14,6 +14,7 @@ import {
   Amount,
   Header,
   Loader,
+  DecomReason,
 } from "../components";
 import useResponsive from "../lib/useResponsive";
 
@@ -98,6 +99,7 @@ const GET_SERVICE_NODE = gql`
           height
           heightDate
         }
+        extra
       }
       versionHistories {
         version {
@@ -328,6 +330,25 @@ function ServiceNode({ match }) {
   const responsiveDirection = r({ default: "column", medium: "row" });
   const responsiveAlign = r({ default: "left", medium: "center" });
 
+  let extrastatus = <></>;
+  if (status === "DECOMISSIONED" && statusHistories.length > 0) {
+    const latestDecomissioned = statusHistories[0];
+    if (latestDecomissioned.extra) {
+      const extraObj = JSON.parse(latestDecomissioned.extra);
+      if (extraObj.reasons && extraObj.reasons.length > 0) {
+        extrastatus = (
+          <Box style={{ paddingLeft: "17px", paddingTop: "3px" }}>
+            {extraObj.reasons.map((reason, i) => (
+              <>
+                <DecomReason key={reason} reason={reason} color="light-1" />
+              </>
+            ))}
+          </Box>
+        );
+      }
+    }
+  }
+
   return (
     <>
       <Header
@@ -358,6 +379,7 @@ function ServiceNode({ match }) {
               {constants.statusTexts[status]}
             </Text>
           )}
+          {extrastatus}
         </Box>
 
         <Box
@@ -369,15 +391,17 @@ function ServiceNode({ match }) {
           style={{ display: r({ default: "none", medium: "block" }) }}
         />
 
-        <TimerCounter
-          title="Last uptime proof:"
-          dateTime={lastUptimeProof}
-          titleSize={r({ default: "small", medium: "large" })}
-          size="large"
-          color="light-1"
-          warningThreshold={90}
-          textStyle={{ minWidth: 230 }}
-        />
+        {lastUptimeProof && (
+          <TimerCounter
+            title="Last uptime proof:"
+            dateTime={lastUptimeProof}
+            titleSize={r({ default: "small", medium: "large" })}
+            size="large"
+            color="light-1"
+            warningThreshold={90}
+            textStyle={{ minWidth: 230 }}
+          />
+        )}
         <TimerCounter
           title={`Next test:${extraNextTestDateTest}`}
           dateTime={nextTestDateTime}

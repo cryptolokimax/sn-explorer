@@ -15,7 +15,7 @@ const CopyButton = styled(Button)`
   }
 `;
 
-const Amount = ({ amount, metric = " OXEN", decimalScale = 2 }) => {
+const Amount = ({ amount, metric = " OXEN", decimalScale = 2, style = {} }) => {
   const amountWithPrecision = amount && amount.toFixed(9).replace(/\.?0+$/, "");
   const [isCopied, setCopied] = useClipboard(amountWithPrecision);
   const r = useResponsive();
@@ -67,6 +67,7 @@ const Amount = ({ amount, metric = " OXEN", decimalScale = 2 }) => {
           thousandSeparator
           decimalScale={decimalScale}
           suffix={metric}
+          style={style}
         />
       </CopyButton>
     </Floater>
@@ -77,6 +78,7 @@ const Amount = ({ amount, metric = " OXEN", decimalScale = 2 }) => {
       thousandSeparator
       decimalScale={decimalScale}
       suffix={metric}
+      style={style}
     />
   );
 };
