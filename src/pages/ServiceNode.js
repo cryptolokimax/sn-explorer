@@ -57,10 +57,6 @@ const GET_SERVICE_NODE = gql`
         stakingRequirement
         heightDate
       }
-      lastRewardBlockHeight {
-        height
-        heightDate
-      }
       publicIp {
         latitude
         longitude
@@ -82,16 +78,6 @@ const GET_SERVICE_NODE = gql`
       downtimeBlocksHistories {
         earnedDowntimeBlocks
         createdAt
-      }
-      totalReward
-      rewardHistories {
-        reward
-        height {
-          height
-          heightDate
-          priceBTC
-          priceUSD
-        }
       }
       statusHistories {
         status
@@ -194,29 +180,29 @@ function ServiceNode({ match }) {
   });
 
   // Generate and Download CSV on request
-  const [generateCVS] = useLazyQuery(GET_FULL_REWARDS_HISTORY, {
-    variables: { publicKey, noLimit: true },
-    onCompleted: (data) => {
-      if (data.serviceNode && data.serviceNode.rewardHistories) {
-        const csvdata = data.serviceNode.rewardHistories.map((h) => ({
-          date: h.height.heightDate.substring(0, 10),
-          reward: h.reward,
-          btc: h.reward * h.height.priceBTC,
-          usd: h.reward * h.height.priceUSD,
-          eur: h.reward * h.height.priceEUR,
-        }));
-        const columns = {
-          date: "Date",
-          reward: "SN reward (OXEN)",
-          btc: "SN reward (BTC)",
-          usd: "SN reward (USD)",
-          eur: "SN reward (EUR)",
-        };
+  // const [generateCVS] = useLazyQuery(GET_FULL_REWARDS_HISTORY, {
+  //   variables: { publicKey, noLimit: true },
+  //   onCompleted: (data) => {
+  //     if (data.serviceNode && data.serviceNode.rewardHistories) {
+  //       const csvdata = data.serviceNode.rewardHistories.map((h) => ({
+  //         date: h.height.heightDate.substring(0, 10),
+  //         reward: h.reward,
+  //         btc: h.reward * h.height.priceBTC,
+  //         usd: h.reward * h.height.priceUSD,
+  //         eur: h.reward * h.height.priceEUR,
+  //       }));
+  //       const columns = {
+  //         date: "Date",
+  //         reward: "SN reward (OXEN)",
+  //         btc: "SN reward (BTC)",
+  //         usd: "SN reward (USD)",
+  //         eur: "SN reward (EUR)",
+  //       };
 
-        downloadCsv(csvdata, columns, `rewards_${publicKey}.csv`);
-      }
-    },
-  });
+  //       downloadCsv(csvdata, columns, `rewards_${publicKey}.csv`);
+  //     }
+  //   },
+  // });
 
   const {
     loading: loadingUnlocking,
@@ -296,10 +282,10 @@ function ServiceNode({ match }) {
     maxNumOfContributions,
     contributions,
     earnedDowntimeBlocks,
-    lastRewardBlockHeight,
+    // lastRewardBlockHeight,
     downtimeBlocksHistories,
-    totalReward,
-    rewardHistories,
+    // totalReward,
+    // rewardHistories,
     statusHistories,
     versionHistories,
     publicIPHistories,
@@ -331,6 +317,7 @@ function ServiceNode({ match }) {
   const responsiveAlign = r({ default: "left", medium: "center" });
 
   let extrastatus = <></>;
+  let lokinetReachableCombined = lokinetReachable;
   if (status === "DECOMISSIONED" && statusHistories.length > 0) {
     const latestDecomissioned = statusHistories[0];
     if (latestDecomissioned.extra) {
@@ -338,16 +325,21 @@ function ServiceNode({ match }) {
       if (extraObj.reasons && extraObj.reasons.length > 0) {
         extrastatus = (
           <Box style={{ paddingLeft: "17px", paddingTop: "3px" }}>
-            {extraObj.reasons.map((reason, i) => (
-              <>
-                <DecomReason key={reason} reason={reason} color="light-1" />
-              </>
-            ))}
+            {extraObj.reasons.map((reason, i) => {
+              if (reason === 'lokinet') lokinetReachableCombined = false;
+              return (
+                <>
+                  <DecomReason key={reason} reason={reason} color="light-1" />
+                </>
+              )
+            }
+            )}
           </Box>
         );
       }
     }
   }
+
 
   return (
     <>
@@ -466,40 +458,43 @@ function ServiceNode({ match }) {
           pad="small"
           direction={responsiveDirection}
         >
-          <Box direction="column">
-            <Box align="center" direction="row">
-              <Text size="large" weight="bold" margin={{ right: "small" }}>
-                Operator fee:
-              </Text>
-              <Text size="large">
-                <Amount amount={operatorFee} metric="%" />
-              </Text>
+
+          {status !== "DEREGISTERED_BY_UNLOCK" && status !== "DEREGISTERED_BY_PENALTY" && (
+            <Box direction="column">
+              <Box align="center" direction="row">
+                <Text size="large" weight="bold" margin={{ right: "small" }}>
+                  Operator fee:
+                </Text>
+                <Text size="large">
+                  <Amount amount={operatorFee} metric="%" />
+                </Text>
+              </Box>
+              <Box align="center" direction="row" margin={{ top: "medium" }}>
+                {storageServerReachable ? (
+                  <StatusGood />
+                ) : (
+                  <StatusWarning color="status-error" />
+                )}
+                <Text size="large" margin={{ left: "small", right: "small" }}>
+                  {storageServerReachable
+                    ? "Storage Server Reachable"
+                    : "Storage Server NOT Reachable"}
+                </Text>
+              </Box>
+              <Box align="center" direction="row" margin={{ top: "medium" }}>
+                {lokinetReachableCombined ? (
+                  <StatusGood />
+                ) : (
+                  <StatusWarning color="status-error" />
+                )}
+                <Text size="large" margin={{ left: "small", right: "small" }}>
+                  {lokinetReachableCombined
+                    ? "Lokinet Reachable"
+                    : "Lokinet NOT Reachable"}
+                </Text>
+              </Box>
             </Box>
-            <Box align="center" direction="row" margin={{ top: "medium" }}>
-              {storageServerReachable ? (
-                <StatusGood />
-              ) : (
-                <StatusWarning color="status-error" />
-              )}
-              <Text size="large" margin={{ left: "small", right: "small" }}>
-                {storageServerReachable
-                  ? "Storage Server Reachable"
-                  : "Storage Server NOT Reachable"}
-              </Text>
-            </Box>
-            <Box align="center" direction="row" margin={{ top: "medium" }}>
-              {lokinetReachable ? (
-                <StatusGood />
-              ) : (
-                <StatusWarning color="status-error" />
-              )}
-              <Text size="large" margin={{ left: "small", right: "small" }}>
-                {lokinetReachable
-                  ? "Lokinet Reachable"
-                  : "Lokinet NOT Reachable"}
-              </Text>
-            </Box>
-          </Box>
+          )}
         </Box>
       </Box>
 
@@ -586,7 +581,7 @@ function ServiceNode({ match }) {
         pad="small"
         direction={responsiveDirection}
       >
-        <Box align="start" justify="center" pad="small">
+        {/* <Box align="start" justify="center" pad="small">
           <Heading size="small">
             Reward earned: <Amount amount={totalReward} />
             <Button
@@ -605,15 +600,15 @@ function ServiceNode({ match }) {
           >
             <RewardHistories rewardHistories={rewardHistories} />
           </Box>
-        </Box>
-        {active && (
+        </Box> */}
+        {/* {active && (
           <NextReward
             stats={stats}
             lastRewardBlockHeight={lastRewardBlockHeight}
             rewardHistories={rewardHistories}
             unlockingNodes={dataUnlocking}
           />
-        )}
+        )} */}
       </Box>
       <Box
         align="start"
@@ -633,31 +628,36 @@ function ServiceNode({ match }) {
           pad="small"
           margin={r({ default: {}, medium: { left: "large" } })}
         >
-          <Box
-            align="center"
-            justify="start"
-            pad="xsmall"
-            direction={responsiveDirection}
-          >
-            <Box align="start" justify="center" pad="xsmall">
-              <Heading size="small">Version: {currentVersion}</Heading>
-            </Box>
-            {currentVersion !== currentVersionGlobal ? (
-              <Box align="center" justify="center" pad="small" direction="row">
-                <StatusWarning color="status-error" />
-                <Heading size="small" margin={{ left: "medium" }} level="3">
-                  requires upgrade ({currentVersionGlobal})
-                </Heading>
+          {currentVersion && (
+            <>
+              <Box
+                align="center"
+                justify="start"
+                pad="xsmall"
+                direction={responsiveDirection}
+              >
+                <Box align="start" justify="center" pad="xsmall">
+                  <Heading size="small">Version: {currentVersion}</Heading>
+                </Box>
+                {currentVersion !== currentVersionGlobal ? (
+                  <Box align="center" justify="center" pad="small" direction="row">
+                    <StatusWarning color="status-error" />
+                    <Heading size="small" margin={{ left: "medium" }} level="3">
+                      requires upgrade ({currentVersionGlobal})
+                    </Heading>
+                  </Box>
+                ) : (
+                  <Heading size="small" margin={{ left: "medium" }} level="3">
+                    (latest)
+                  </Heading>
+                )}
               </Box>
-            ) : (
-              <Heading size="small" margin={{ left: "medium" }} level="3">
-                (latest)
-              </Heading>
-            )}
-          </Box>
-          <Box align="center" justify="center" pad="medium">
-            <VersionHistories versionHistories={versionHistories} />
-          </Box>
+              <Box align="center" justify="center" pad="medium">
+                <VersionHistories versionHistories={versionHistories} />
+              </Box>
+            </>
+          )}
+
         </Box>
       </Box>
       <Box
@@ -666,12 +666,15 @@ function ServiceNode({ match }) {
         pad="small"
         direction={responsiveDirection}
       >
-        <Box align="start" justify="center" pad="small">
-          <Heading size="small">IP change history</Heading>
-          <Box align="center" justify="start" pad="small" direction="row">
-            <PublicIPHistories publicIPHistories={publicIPHistories} />
+
+        {publicIPHistories.length > 0 && (
+          <Box align="start" justify="center" pad="small">
+            <Heading size="small">IP change history</Heading>
+            <Box align="center" justify="start" pad="small" direction="row">
+              <PublicIPHistories publicIPHistories={publicIPHistories} />
+            </Box>
           </Box>
-        </Box>
+        )}
         <Box
           align="center"
           justify="center"
@@ -691,12 +694,13 @@ function ServiceNode({ match }) {
         pad="small"
         direction="row"
       >
-        <Box align="start" justify="center" pad="small">
+        {swarmHistories.length > 0 && (<Box align="start" justify="center" pad="small">
           <Heading size="small">Swarm ID: {currentSwarm}</Heading>
           <Box align="center" justify="start" pad="small" direction="row">
             <SwarmHistories swarmHistories={swarmHistories} />
           </Box>
-        </Box>
+        </Box>)}
+
       </Box>
     </>
   );

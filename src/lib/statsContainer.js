@@ -11,6 +11,7 @@ const GET_STATS = gql`
         stakingRequirement
       }
       activeNodesNum
+      lastFee
       currentVersion {
         version
       }

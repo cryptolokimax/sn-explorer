@@ -92,6 +92,8 @@ function Index() {
   );
   const activeNodesNum = _.get(stats, "data.generalStatistics.activeNodesNum");
 
+  const lastFee = _.get(stats, "data.generalStatistics.lastFee");
+
   const { loading, error, data } = useQuery(GET_SERVICE_NODE_STATS, {
     pollInterval: 90000,
   });
@@ -212,9 +214,9 @@ function Index() {
           direction="column"
         >
           <Heading>
-            {stakingRequirement && <Amount amount={stakingRequirement} />}
+            {lastFee && <Amount amount={lastFee} metric="%" />}
           </Heading>
-          <Text>Staking Requirement</Text>
+          <Text>Operator fee (30 days average)</Text>
         </Box>
         <Box
           align="center"

@@ -14,7 +14,7 @@ import User from "./pages/User";
 import StatsContainer from "./lib/statsContainer";
 
 const client = new ApolloClient({
-  uri: "https://api.oxensn.com/",
+  uri: "https://graphql.oxensn.com/",
   // uri: "http://localhost:3999/",
 });
 

@@ -7,7 +7,6 @@ const Status = ({ status, extra, ...rest }) => {
   let extrastatus = <></>;
   if (extra) {
     const extraObj = JSON.parse(extra);
-    console.log(extraObj);
     if (extraObj.reasons && extraObj.reasons.length > 0) {
       extrastatus = (
         <Box style={{ paddingTop: "7px" }}>

@@ -2,18 +2,19 @@ import React from "react";
 import { WorldMap, Stack, Box, Text } from "grommet";
 
 const WorldMapComponent = ({ publicIp }) => {
+  if (!publicIp) return (<></>);
   const { latitude, longitude, country } = publicIp;
   return (
     <Stack anchor="center">
       <WorldMap
         color="light-5"
-        onSelectPlace={(lat, lon) => {}}
+        onSelectPlace={(lat, lon) => { }}
         places={[
           {
             name: "",
             location: [latitude, longitude],
             color: "accent-2",
-            onClick: (name) => {},
+            onClick: (name) => { },
           },
         ]}
         selectColor="accent-2"
